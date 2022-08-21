@@ -1,0 +1,53 @@
+import 'package:agenda_booking/models/stylist.dart';
+import 'dart:convert';
+
+Service serviceFromJson(String str) => Service.fromDetailJson(json.decode(str));
+
+String serviceToJson(Service data) => json.encode(data.toDetailJson());
+
+class Service {
+  Service({
+    required this.id,
+    required this.name,
+    required this.price,
+    required this.categoryId,
+    required this.stylists,
+  });
+
+  int id;
+  String name;
+  double price;
+  int categoryId;
+  List<Stylist> stylists;
+
+  factory Service.fromJson(Map<String, dynamic> json) => Service(
+        id: json["id"],
+        name: json["name"],
+        price: json["price"].toDouble(),
+        categoryId: json["category_id"], stylists: [],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "name": name,
+        "price": price,
+        "category_id": categoryId,
+      };
+
+  factory Service.fromDetailJson(Map<String, dynamic> json) => Service(
+        id: json["id"],
+        name: json["name"],
+        price: json["price"].toDouble(),
+        categoryId: json["category_id"],
+        stylists: List<Stylist>.from(
+            json["stylists"].map((x) => Stylist.fromJson(x))),
+      );
+
+  Map<String, dynamic> toDetailJson() => {
+        "id": id,
+        "name": name,
+        "price": price,
+        "category_id": categoryId,
+        "stylists": List<dynamic>.from(stylists.map((x) => x.toJson())),
+      };
+}

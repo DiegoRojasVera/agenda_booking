@@ -1,43 +1,44 @@
-import 'package:flutter/foundation.dart';
+import 'package:agenda_booking/models/service.dart';
+import 'package:agenda_booking/models/category.dart';
+import 'package:agenda_booking/providers/servides_provider.dart';
+import 'package:agenda_booking/utils/utils.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../utils/utils.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatelessWidget {
-  static final String route = '/';
+  static const String route = '/';
+
+  const HomePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    ServicesProvider servicesProvider = Provider.of<ServicesProvider>(context);
     return Scaffold(
-      body: Stack(
-        children: [
-          PageView(
-            children: const [
-              _CategoryPageView(
-                path: 'assets/haircut.jpg',
-              ),
-              _CategoryPageView(
-                path: 'assets/haircut.jpg',
-              ),
-              _CategoryPageView(
-                path: 'assets/haircut.jpg',
-              ),
-              _CategoryPageView(
-                path: 'assets/haircut.jpg',
-              ),
-            ],
-          ),
-          const _WhiteBox(),
-        ],
-      ),
+      body: servicesProvider.isLoading
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : Stack(
+              children: [
+                PageView.builder(
+                  itemCount: servicesProvider.categories.length,
+                  itemBuilder: (_, int index) {
+                    return _CategoryPageView(
+                      path: servicesProvider.categories[index].photo,
+                    );
+                  },
+                ),
+                const _WhiteBox(),
+              ],
+            ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
       floatingActionButton: FloatingActionButton(
         elevation: 0.0,
-        mini:true,
-
+        mini: true,
         backgroundColor: Theme.of(context).primaryColor,
         child: Icon(Icons.search),
         onPressed: () {},
-
       ),
     );
   }
@@ -60,7 +61,7 @@ class _WhiteBox extends StatelessWidget {
           children: [
             Container(
               height: 70,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
@@ -90,8 +91,7 @@ class _HomeServices extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<Category> categories = testCategories();
-    List<Service> services = testService();
+    ServicesProvider servicesProvider = Provider.of<ServicesProvider>(context);
 
     return SingleChildScrollView(
       child: Padding(
@@ -106,11 +106,15 @@ class _HomeServices extends StatelessWidget {
             SizedBox(
               height: 20,
             ),
-            _CategoriesCarousel(categories: categories),
+            _CategoriesCarousel(
+              categories: servicesProvider.categories,
+            ),
             SizedBox(
               height: 20,
             ),
-            _ServicesList(services: services),
+            _ServicesList(
+              services: servicesProvider.category.services,
+            ),
           ],
         ),
       ),
@@ -163,6 +167,7 @@ class _CategoriesCarousel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ServicesProvider servicesProvider = Provider.of<ServicesProvider>(context);
     return Container(
         height: 70,
         child: ListView.separated(
@@ -172,10 +177,10 @@ class _CategoriesCarousel extends StatelessWidget {
             Category category = categories[index];
 
             final categoryItem = _CategoryItem(
-              icon: category.icon,
+              icon: Icons.ac_unit_outlined, // category.icon,
               label: category.name,
-              isSelected: index == 1,
-              onTap: () => print(category.name),
+              isSelected: servicesProvider.category.id == category.id,
+              onTap: () => servicesProvider.selectCategory(category),
             );
 
             if (index == 0) {
@@ -261,60 +266,12 @@ class _CategoryPageView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       alignment: Alignment.topCenter,
-      child: Image(
-        image: AssetImage(path),
+      child: FadeInImage(
+        placeholder: AssetImage('assets/haircut.jpg'),
+        image: NetworkImage(path),
         fit: BoxFit.contain,
         width: double.infinity,
       ),
     );
   }
-}
-
-class Category {
-  String name;
-  IconData icon;
-
-  Category(this.name, this.icon);
-}
-
-class Service {
-  late String name;
-  late double price;
-
-  Service(this.name, this.price);
-}
-
-List<Category> testCategories() {
-  return [
-    Category('Haircuts1', Icons.cut),
-    Category('Haircuts2', Icons.ad_units),
-    Category('Haircuts3', Icons.commute_sharp),
-    Category('Haircuts4', Icons.cut),
-    Category('Haircuts5', Icons.ad_units),
-    Category('Haircuts6', Icons.commute_sharp),
-    Category('Haircuts7', Icons.cut),
-    Category('Haircuts8', Icons.ad_units),
-    Category('Haircuts9', Icons.commute_sharp),
-    Category('Haircuts10', Icons.commute_sharp),
-    Category('Haircuts11', Icons.commute_sharp),
-    Category('Haircuts12', Icons.commute_sharp),
-  ];
-}
-
-List<Service> testService() {
-  return [
-    Service('Lorem Ipsum 1', 25),
-    Service('Lorem Ipsum 2', 65),
-    Service('Lorem Ipsum 3', 45),
-    Service('Lorem Ipsum 4', 25),
-    Service('Lorem Ipsum 5', 15),
-    Service('Lorem Ipsum 6', 5),
-    Service('Lorem Ipsum 7', 75),
-    Service('Lorem Ipsum 8', 15),
-    Service('Lorem Ipsum 9', 5),
-    Service('Lorem Ipsum 10', 75),
-    Service('Lorem Ipsum 11', 15),
-    Service('Lorem Ipsum 12', 5),
-    Service('Lorem Ipsum 13', 75),
-  ];
 }
