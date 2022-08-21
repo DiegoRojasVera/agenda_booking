@@ -34,12 +34,15 @@ class HomePage extends StatelessWidget {
               ],
             ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
-      floatingActionButton: FloatingActionButton(
-        elevation: 0.0,
-        mini: true,
-        backgroundColor: Theme.of(context).primaryColor,
-        child: Icon(Icons.search),
-        onPressed: () {},
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(top: 10.0),
+        child: FloatingActionButton(
+          elevation: 0.0,
+          mini: true,
+          backgroundColor: Theme.of(context).primaryColor,
+          child: Icon(Icons.search),
+          onPressed: () {},
+        ),
       ),
     );
   }
@@ -52,6 +55,7 @@ class _WhiteBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ServicesProvider servicesProvider = Provider.of(context);
     final size = MediaQuery.of(context).size;
     return Align(
       alignment: Alignment.bottomCenter,
@@ -75,7 +79,10 @@ class _WhiteBox extends StatelessWidget {
             Expanded(
               child: Container(
                 color: Colors.white,
-                child: _HomeServices(),
+                child: RefreshIndicator(
+                    color: Utils.primaryColor,
+                    onRefresh: () => servicesProvider.loadCategories(),
+                    child: _HomeServices()),
               ),
             ),
           ],
