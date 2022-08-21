@@ -17,7 +17,7 @@ class Category {
     required this.services,
   });
 
-  int? id;
+  int id;
   String name;
   String icon;
   String photo;

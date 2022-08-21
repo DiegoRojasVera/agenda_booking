@@ -2,7 +2,6 @@ import 'package:agenda_booking/models/service.dart';
 import 'package:agenda_booking/models/category.dart';
 import 'package:agenda_booking/providers/servides_provider.dart';
 import 'package:agenda_booking/utils/utils.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -16,12 +15,14 @@ class HomePage extends StatelessWidget {
     ServicesProvider servicesProvider = Provider.of<ServicesProvider>(context);
     return Scaffold(
       body: servicesProvider.isLoading
-          ? Center(
+          ? const Center(
               child: CircularProgressIndicator(),
             )
           : Stack(
               children: [
                 PageView.builder(
+                  physics: NeverScrollableScrollPhysics(),
+                  controller: servicesProvider.pageController,
                   itemCount: servicesProvider.categories.length,
                   itemBuilder: (_, int index) {
                     return _CategoryPageView(
@@ -167,7 +168,9 @@ class _CategoriesCarousel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ServicesProvider servicesProvider = Provider.of<ServicesProvider>(context);
+    final ServicesProvider servicesProvider =
+        Provider.of<ServicesProvider>(context);
+
     return Container(
         height: 70,
         child: ListView.separated(
@@ -175,9 +178,8 @@ class _CategoriesCarousel extends StatelessWidget {
           itemCount: categories.length,
           itemBuilder: (_, int index) {
             Category category = categories[index];
-
             final categoryItem = _CategoryItem(
-              icon: Icons.ac_unit_outlined, // category.icon,
+              icon: servicesProvider.icons[category.icon]!,
               label: category.name,
               isSelected: servicesProvider.category.id == category.id,
               onTap: () => servicesProvider.selectCategory(category),
@@ -186,7 +188,7 @@ class _CategoriesCarousel extends StatelessWidget {
             if (index == 0) {
               return Row(
                 children: [
-                  SizedBox(width: 20),
+                  const SizedBox(width: 20),
                   categoryItem,
                 ],
               );
@@ -195,14 +197,14 @@ class _CategoriesCarousel extends StatelessWidget {
               return Row(
                 children: [
                   categoryItem,
-                  SizedBox(width: 20),
+                  const SizedBox(width: 20),
                 ],
               );
             }
             return categoryItem;
           },
           separatorBuilder: (_, int index) {
-            return SizedBox(width: 10);
+            return const SizedBox(width: 10);
           },
         ));
   }

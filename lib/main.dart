@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
               ),
         ),
         routes: {
-          HomePage.route: (_) => HomePage(),
+          HomePage.route: (_) => const HomePage(),
           BookingPage.route: (_) => BookingPage(),
           FinishPage.route: (_) => FinishPage(),
         },

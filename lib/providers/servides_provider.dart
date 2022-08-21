@@ -1,25 +1,41 @@
 import 'package:flutter/material.dart';
-import 'package:agenda_booking/models/service.dart';
-import 'package:flutter/services.dart';
+import 'package:fluttericon/font_awesome5_icons.dart';
+import 'package:fluttericon/font_awesome_icons.dart';
+import 'package:fluttericon/rpg_awesome_icons.dart';
 import 'package:http/http.dart' as http;
-
 import '../models/category.dart';
 
 class ServicesProvider with ChangeNotifier {
+  final Map<String, IconData >  icons = {
+    'scissors': FontAwesome.scissors,
+    'knife': RpgAwesome.knife,
+    'mask': FontAwesome5.mask,
+    'pump_soap': FontAwesome5.pump_soap,
+    'hand_sparkles': FontAwesome5.hand_sparkles,
+    'face': Icons.face,
+    'airline_seat_legroom_extra': Icons.airline_seat_legroom_extra,
+    'person_booth': FontAwesome5.person_booth,
+  };
+
+  final PageController _pageController = PageController(initialPage: 0);
   List<Category> _categories = [];
+
+  PageController get pageController => _pageController;
+
   List<Category> get categories => _categories;
 
+  bool get isLoading => _isLoading;
   bool _isLoading = false;
 
   ServicesProvider() {
     loadCategories();
     notifyListeners();
+
   }
 
-  late  Category _category;
-  Category get category => _category;
+  late Category _category;
 
-  bool get isLoading => _isLoading;
+  Category get category => _category;
 
   set isLoading(bool value) {
     _isLoading = value;
@@ -27,7 +43,10 @@ class ServicesProvider with ChangeNotifier {
   }
 
   void selectCategory(Category category) {
+    int index = _categories.indexOf(category);
     _category = category;
+    _pageController.animateToPage(index,
+        duration: Duration(milliseconds: 300), curve: Curves.easeIn);
     notifyListeners();
   }
 
