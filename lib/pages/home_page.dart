@@ -102,7 +102,8 @@ class _HomeServices extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: Text('Services'),
+              child: Text('Services',
+                  style: Theme.of(context).textTheme.headline6),
             ),
             SizedBox(
               height: 20,
@@ -170,9 +171,8 @@ class _CategoriesCarousel extends StatelessWidget {
   Widget build(BuildContext context) {
     final ServicesProvider servicesProvider =
         Provider.of<ServicesProvider>(context);
-
     return Container(
-        height: 70,
+        height: 90, // modificar el espacio de los iconos de servicios
         child: ListView.separated(
           scrollDirection: Axis.horizontal,
           itemCount: categories.length,
@@ -204,7 +204,7 @@ class _CategoriesCarousel extends StatelessWidget {
             return categoryItem;
           },
           separatorBuilder: (_, int index) {
-            return const SizedBox(width: 10);
+            return const SizedBox(width: 15); // se paracion entre los iconos
           },
         ));
   }
@@ -233,8 +233,8 @@ class _CategoryItem extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             Container(
-                width: 50,
-                height: 50,
+                width: 60,
+                height: 60,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color:
@@ -242,15 +242,16 @@ class _CategoryItem extends StatelessWidget {
                 ),
                 child: Icon(
                   icon,
-                  size: 28,
+                  size: 40, // tamaño del los dibujos en los iconos
                   color: isSelected ? Colors.white : Utils.sencondaryColor,
                 )),
-            SizedBox(
-              height: 5,
-            ),
+            //     SizedBox(
+            //      height: 5,
+            //    ),
             Text(
               label,
-              style: TextStyle(fontSize: 13),
+              style: TextStyle(
+                  fontSize: 16), // tamaño de las letras de los sercicios iconos
             ),
           ],
         ),

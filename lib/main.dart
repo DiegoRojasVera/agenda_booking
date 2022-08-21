@@ -29,6 +29,10 @@ class MyApp extends StatelessWidget {
                 subtitle1: ThemeData.light().textTheme.subtitle1?.copyWith(
                       color: Utils.sencondaryColor,
                     ),
+                headline6: ThemeData.light().textTheme.headline6!.copyWith(
+                      color: Utils.sencondaryColor,
+                      fontWeight: FontWeight.w400,
+                    ),
               ),
         ),
         routes: {

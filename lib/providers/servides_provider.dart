@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 import '../models/category.dart';
 
 class ServicesProvider with ChangeNotifier {
-  final Map<String, IconData >  icons = {
+  final Map<String, IconData> icons = {
     'scissors': FontAwesome.scissors,
     'knife': RpgAwesome.knife,
     'mask': FontAwesome5.mask,
@@ -30,7 +30,6 @@ class ServicesProvider with ChangeNotifier {
   ServicesProvider() {
     loadCategories();
     notifyListeners();
-
   }
 
   late Category _category;
