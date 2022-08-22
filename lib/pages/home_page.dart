@@ -5,6 +5,8 @@ import 'package:agenda_booking/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../widgets/search_box.dart';
+
 class HomePage extends StatelessWidget {
   static const String route = '/';
 
@@ -31,6 +33,13 @@ class HomePage extends StatelessWidget {
                   },
                 ),
                 const _WhiteBox(),
+                Align(
+                    alignment: Alignment.topRight,
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 40.0),
+                      //la altura del texto del buscador
+                      child: SearchBox(),
+                    )),
               ],
             ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
@@ -39,9 +48,16 @@ class HomePage extends StatelessWidget {
         child: FloatingActionButton(
           elevation: 0.0,
           mini: true,
-          backgroundColor: Theme.of(context).primaryColor,
-          child: Icon(Icons.search),
-          onPressed: () {},
+          backgroundColor: servicesProvider.isSearchVisible
+              ? Utils.sencondaryColor
+              : Theme.of(context).primaryColor,
+          child: servicesProvider.isSearchVisible
+              ? Icon(Icons.close)
+              : Icon(Icons.search),
+          onPressed: () {
+            servicesProvider.isSearchVisible =
+                !servicesProvider.isSearchVisible;
+          },
         ),
       ),
     );

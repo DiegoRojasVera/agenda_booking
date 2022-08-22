@@ -25,11 +25,13 @@ class ServicesProvider with ChangeNotifier {
   List<Category> get categories => _categories;
 
   bool get isLoading => _isLoading;
+  bool get isSearchVisible => _isSearchVisible;
+
   bool _isLoading = false;
+  bool _isSearchVisible=false;
 
   ServicesProvider() {
     loadCategories();
-    notifyListeners();
   }
 
   late Category _category;
@@ -38,6 +40,10 @@ class ServicesProvider with ChangeNotifier {
 
   set isLoading(bool value) {
     _isLoading = value;
+    notifyListeners();
+  }
+  set isSearchVisible(bool value) {
+    _isSearchVisible = value;
     notifyListeners();
   }
 
