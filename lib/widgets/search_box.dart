@@ -34,6 +34,9 @@ class SearchBox extends StatelessWidget {
                   BoxShadow(color: Utils.sencondaryColor, blurRadius: 5),
                 ]),
             child: TextField(
+              onChanged: (String value) {
+                servicesProvider.search = value;
+              },
               decoration: InputDecoration(
                 isCollapsed: true,
                 //fillColor: Utils.primaryColor,

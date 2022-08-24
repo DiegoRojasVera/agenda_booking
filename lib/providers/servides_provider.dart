@@ -1,9 +1,12 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:fluttericon/font_awesome_icons.dart';
 import 'package:fluttericon/rpg_awesome_icons.dart';
 import 'package:http/http.dart' as http;
 import '../models/category.dart';
+import '../models/service.dart';
 
 class ServicesProvider with ChangeNotifier {
   final Map<String, IconData> icons = {
@@ -20,20 +23,26 @@ class ServicesProvider with ChangeNotifier {
   final PageController _pageController = PageController(initialPage: 0);
   List<Category> _categories = [];
 
-  PageController get pageController => _pageController;
+  TextEditingController get searchController => _searchController;
 
   List<Category> get categories => _categories;
+  late String _search;
 
   bool get isLoading => _isLoading;
-  bool get isSearchVisible => _isSearchVisible;
 
+  bool get isSearchVisible => _isSearchVisible;
   bool _isLoading = false;
-  bool _isSearchVisible=false;
+  final TextEditingController _searchController =
+      TextEditingController(text: '');
+  bool _isSearchVisible = false;
+
+  String get search => _search;
 
   ServicesProvider() {
     loadCategories();
   }
 
+  PageController get pageController => _pageController;
   late Category _category;
 
   Category get category => _category;
@@ -42,8 +51,19 @@ class ServicesProvider with ChangeNotifier {
     _isLoading = value;
     notifyListeners();
   }
+
+  set search(String value) {
+    _search = value;
+    notifyListeners();
+  }
+
   set isSearchVisible(bool value) {
     _isSearchVisible = value;
+
+    if (value = false) {
+      _searchController.dispose();
+      _search = '';
+    }
     notifyListeners();
   }
 
@@ -76,4 +96,14 @@ class ServicesProvider with ChangeNotifier {
 
     return [];
   }
+
+  Future<Service?> getServiceForBooking(int id, String date) async {
+    final url = Uri.http('192.168.100.4:8000', '/api/services/$id?date=$date');
+    final response = await http.get(url);
+    if(response.statusCode==200){
+    }
+    return null;
+  }
+
+
 }

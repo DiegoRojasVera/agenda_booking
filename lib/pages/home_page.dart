@@ -4,8 +4,8 @@ import 'package:agenda_booking/providers/servides_provider.dart';
 import 'package:agenda_booking/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../widgets/search_box.dart';
+import 'booking_page.dart';
 
 class HomePage extends StatelessWidget {
   static const String route = '/';
@@ -164,6 +164,10 @@ class _ServicesList extends StatelessWidget {
         itemBuilder: (_, int index) {
           Service service = services[index];
           return ListTile(
+            onTap: () {
+              Navigator.of(context)
+                  .pushNamed(BookingPage.route, arguments: service);
+            },
             title: Text(service.name),
             trailing: Text(
               "\$${service.price}",

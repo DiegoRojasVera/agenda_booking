@@ -33,11 +33,15 @@ class MyApp extends StatelessWidget {
                       color: Utils.sencondaryColor,
                       fontWeight: FontWeight.w400,
                     ),
+                headline5: ThemeData.light().textTheme.headline5!.copyWith(
+                      color: Utils.sencondaryColor,
+                      fontWeight: FontWeight.w400,
+                    ),
               ),
         ),
         routes: {
           HomePage.route: (_) => const HomePage(),
-          BookingPage.route: (_) => BookingPage(),
+          BookingPage.route: (_) => const BookingPage(),
           FinishPage.route: (_) => FinishPage(),
         },
       ),
