@@ -128,13 +128,13 @@ class _HomeServices extends StatelessWidget {
               child: Text('Services',
                   style: Theme.of(context).textTheme.headline6),
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             _CategoriesCarousel(
               categories: servicesProvider.categories,
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             _ServicesList(
@@ -215,7 +215,7 @@ class _CategoriesCarousel extends StatelessWidget {
             if (index == 0) {
               return Row(
                 children: [
-                  const SizedBox(width: 20),
+                  const SizedBox(width: 10),
                   categoryItem,
                 ],
               );
