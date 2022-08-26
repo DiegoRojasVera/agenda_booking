@@ -3,7 +3,9 @@ import 'dart:core';
 import 'package:agenda_booking/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:agenda_booking/models/service.dart';
+import '../widgets/booking_action_button.dart';
 import '../widgets/calendar.dart';
+import 'confirm_booking_modal.dart';
 
 class BookingPage extends StatelessWidget {
   static final String route = '/booking';
@@ -25,61 +27,43 @@ class BookingPage extends StatelessWidget {
           icon: const Icon(Icons.arrow_back_ios_new_outlined),
         ),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          const Expanded(child: _BookingMainContent()),
-          _BookingActionButton(onPressed: () {})
-        ],
-      ),
-    );
-  }
-}
-
-class _BookingActionButton extends StatelessWidget {
-  const _BookingActionButton({
-    Key? key,
-    required this.onPressed,
-  }) : super(key: key);
-
-  final Function()? onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    // Boton del socalo
-    return Container(
-      color: Colors.white, // se transforma en traparente si sacamos eso
-      padding: EdgeInsets.all(10),
-      //  height: 80, // socalo de abajo fijo
-      child: Center(
-        child: ElevatedButton(
-          onPressed: onPressed,//Boton del socalo de abajo
-          style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 70),
-              primary: Utils.sencondaryColor,
-              shape: const StadiumBorder()),
-          child: const Text('Book Now',
-              style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w300)),
+      body: Container(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const Expanded(child: _BookingMainContent()),
+            BookingActionButton(onPressed: () {
+              showModalBottomSheet<void>(
+                context: context,
+                isScrollControlled: true,
+                builder: (BuildContext context) {
+                  return ConfirmBookingModal();
+                },
+              );
+            })
+          ],
         ),
       ),
     );
   }
 }
 
+
 class _BookingMainContent extends StatelessWidget {
   const _BookingMainContent({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    List<Widget>times=[
-      BookingTime(time: "10:00 AM", status: BookingTime.normal),
-      BookingTime(time: "10:00 AM", status: BookingTime.normal),
-      BookingTime(time: "10:00 AM", status: BookingTime.selected),
-      BookingTime(time: "10:00 AM", status: BookingTime.normal),
-      BookingTime(time: "10:00 AM", status: BookingTime.normal),
-      BookingTime(time: "10:00 AM", status: BookingTime.normal),
-      BookingTime(time: "10:00 AM", status: BookingTime.normal),
-      BookingTime(time: "10:00 AM", status: BookingTime.blocked),
-      BookingTime(time: "10:00 AM", status: BookingTime.normal),
+    List<Widget> times = [
+      _BookingTime(time: "10:00 AM", status: _BookingTime.normal),
+      _BookingTime(time: "10:00 AM", status: _BookingTime.normal),
+      _BookingTime(time: "10:00 AM", status: _BookingTime.selected),
+      _BookingTime(time: "10:00 AM", status: _BookingTime.normal),
+      _BookingTime(time: "10:00 AM", status: _BookingTime.normal),
+      _BookingTime(time: "10:00 AM", status: _BookingTime.normal),
+      _BookingTime(time: "10:00 AM", status: _BookingTime.normal),
+      _BookingTime(time: "10:00 AM", status: _BookingTime.blocked),
+      _BookingTime(time: "10:00 AM", status: _BookingTime.normal),
     ];
     return ListView(
       children: [
@@ -93,8 +77,8 @@ class _BookingMainContent extends StatelessWidget {
         const _Subtitle(subtitle: 'Available Time'),
         const SizedBox(height: 10),
         Container(
-
-          height: (times.length/3).ceil()*50, // da la dimension de las letras de los horarios
+          height: (times.length / 3).ceil() * 50,
+          // da la dimension de las letras de los horarios
           child: GridView.count(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             crossAxisSpacing: 20,
@@ -104,7 +88,6 @@ class _BookingMainContent extends StatelessWidget {
             physics: const NeverScrollableScrollPhysics(),
             // para no desplazar el scroll por mas que esten aparte
             children: times,
-
           ),
         ),
       ],
@@ -112,8 +95,8 @@ class _BookingMainContent extends StatelessWidget {
   }
 }
 
-class BookingTime extends StatelessWidget {
-  const BookingTime({Key? key, required this.time, required this.status})
+class _BookingTime extends StatelessWidget {
+  const _BookingTime({Key? key, required this.time, required this.status})
       : super(key: key);
 
   final String time;
@@ -255,51 +238,60 @@ class StylistCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(10), //Dimension de el listado de stulistas
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(10)),
-        border: Border.all(
-            color: isSelected ? Utils.sencondaryColor : Utils.primaryColor!,
-            width: 2),
-      ),
-      child: Column(
-        children: [
-          Container(
-            clipBehavior: Clip.hardEdge,
-            decoration: const BoxDecoration(shape: BoxShape.circle),
-            child: const Image(
-              image: AssetImage('assets/stylist.jpg'),
-              fit: BoxFit.contain,
-              width: 100,
-            ),
+    return Material(
+      child: InkWell(
+        borderRadius: const BorderRadius.all(Radius.circular(10)),
+        onTap: isSelected ? null : () {},
+        child: Ink(
+          padding: const EdgeInsets.all(10),
+          //Dimension de el listado de stulistas
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: const BorderRadius.all(Radius.circular(10)),
+            border: Border.all(
+                color: isSelected ? Utils.sencondaryColor : Utils.primaryColor!,
+                width: 2),
           ),
-          const SizedBox(
-            height: 10,
-          ),
-          Text(
-            stylist.name,
-            style: Theme.of(context).textTheme.headline5,
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          Row(
+          child: Column(
             children: [
+              Container(
+                //Fichas con fotos de los stilistas
+                clipBehavior: Clip.hardEdge,
+                decoration: const BoxDecoration(shape: BoxShape.circle),
+                child: const Image(
+                  image: AssetImage('assets/stylist.jpg'),
+                  fit: BoxFit.contain,
+                  width: 100,
+                ),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
               Text(
-                "${stylist.score}",
-                style: Theme.of(context)
-                    .textTheme
-                    .headline6
-                    ?.copyWith(color: Utils.primaryColor),
+                stylist.name,
+                style: Theme.of(context).textTheme.headline5,
               ),
-              Icon(
-                Icons.star,
-                color: Utils.primaryColor,
+              const SizedBox(
+                height: 10,
               ),
+              Row(
+                children: [
+                  Text(
+                    "${stylist.score}",
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline6
+                        ?.copyWith(color: Utils.primaryColor),
+                  ),
+                  Icon(
+                    Icons.star,
+                    color: Utils.primaryColor,
+                  ),
+                ],
+              )
             ],
-          )
-        ],
+          ),
+        ),
       ),
     );
   }
