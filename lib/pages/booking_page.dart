@@ -32,7 +32,9 @@ class BookingPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const Expanded(child: _BookingMainContent()),
-            BookingActionButton(onPressed: () {
+            BookingActionButton(
+                label:'Book Now',
+                onPressed: () {
               showModalBottomSheet<void>(
                 context: context,
                 isScrollControlled: true,

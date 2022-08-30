@@ -1,11 +1,13 @@
 import 'package:agenda_booking/utils/utils.dart';
 import'package:flutter/material.dart';
+
 class BookingActionButton extends StatelessWidget {
   const BookingActionButton({
     Key? key,
-    required this.onPressed,
+    required this.onPressed, required this.label,
   }) : super(key: key);
 
+  final String label;
   final Function()? onPressed;
 
   @override
@@ -22,7 +24,7 @@ class BookingActionButton extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 70),
               primary: Utils.sencondaryColor,
               shape: const StadiumBorder()),
-          child: const Text('Book Now',
+          child:  Text(label,
               style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w300)),
         ),
       ),

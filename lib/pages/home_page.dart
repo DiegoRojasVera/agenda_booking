@@ -208,8 +208,8 @@ class _CategoriesCarousel extends StatelessWidget {
             final categoryItem = _CategoryItem(
               icon: servicesProvider.icons[category.icon]!,
               label: category.name,
-              isSelected: servicesProvider.category.id == category.id,
               onTap: () => servicesProvider.selectCategory(category),
+              isSelected: servicesProvider.category.id == category.id,
             );
 
             if (index == 0) {

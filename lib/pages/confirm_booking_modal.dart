@@ -2,6 +2,7 @@ import'package:flutter/material.dart';
 
 import '../widgets/booking_action_button.dart';
 import 'booking_page.dart';
+import 'finish_page.dart';
 class ConfirmBookingModal extends StatelessWidget {
   const ConfirmBookingModal({Key? key}) : super(key: key);
 
@@ -31,7 +32,11 @@ class ConfirmBookingModal extends StatelessWidget {
           _BookingInfo(value: "Price:\$45"),
           SizedBox(height: 50,),
           BookingActionButton(
-            onPressed: () => Navigator.pop(context),
+            label: 'Book Now',
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.of(context).pushReplacementNamed(FinishPage.route);
+            },
           )
         ],
       ),

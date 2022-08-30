@@ -71,7 +71,7 @@ class ServicesProvider with ChangeNotifier {
     int index = _categories.indexOf(category);
     _category = category;
     _pageController.animateToPage(index,
-        duration: Duration(milliseconds: 300), curve: Curves.easeIn);
+        duration: Duration(milliseconds: 200), curve: Curves.easeIn);
     notifyListeners();
   }
 
