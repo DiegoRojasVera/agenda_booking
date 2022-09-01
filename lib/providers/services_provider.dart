@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:fluttericon/font_awesome_icons.dart';
@@ -20,7 +18,133 @@ class ServicesProvider with ChangeNotifier {
     'person_booth': FontAwesome5.person_booth,
   };
 
-  final PageController _pageController = PageController(initialPage: 0);
+  final List<String> months = [
+    'Ene',
+    'Feb',
+    'Mar',
+    'Abr',
+    'May',
+    'Jun',
+    'Jul',
+    'Ago',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dic',
+  ];
+  final List<String> weekdays = [
+    'Lu',
+    'Mar',
+    'Mir',
+    'Jue',
+    'Vie',
+    'Sab',
+    'Dom'
+  ];
+
+  final DateTime _minDate = new DateTime(
+    DateTime.now().year,
+    DateTime.now().month,
+    DateTime.now().day,
+    DateTime.now().hour + 2,
+    0,
+    0,
+  );
+  DateTime _date = new DateTime(
+    DateTime.now().year,
+    DateTime.now().month,
+    DateTime.now().day,
+    DateTime.now().hour + 2,
+    0,
+    0,
+  );
+
+  DateTime get currentDate => _date;
+
+  DateTime get minDate => _minDate;
+
+  int get year => _date.year;
+
+  int get month => _date.month;
+
+  int get day => _date.day;
+
+  int get CountMontDays {
+    return DateTime(_date.year, _date.month + 1, 0).day;
+  }
+
+  void subMonth(args) {
+    notifyListeners();
+  }
+
+  void changeMonth(bool add) {
+    int year = _date.year;
+
+    if (!add && _date.month == 1) {
+      year--;
+    } else if (add && _date.month == 12) {
+      year--;
+    }
+
+    int month = add ? _date.month + 1 : _date.month - 1;
+
+    if (month == 0) {
+      month = 12;
+    } else if (month == 13) {
+      month = 1;
+    }
+
+    int day = 1;
+
+    if (_minDate.year == year && _minDate.month == month) {
+      day = _minDate.day;
+    }
+
+    int hour = _date.hour;
+
+    if (_minDate.year == year &&
+        _minDate.month == month &&
+        _minDate.day == day &&
+        _minDate.hour > hour) {
+      hour = _minDate.hour;
+    }
+
+    DateTime newDate = new DateTime(
+      year,
+      month,
+      day, // Al cambiar el mes, poner el dia 1
+      hour,
+      0,
+      0,
+    );
+
+    if (_minDate.compareTo(newDate) <= 0) {
+      _date = newDate;
+      notifyListeners();
+    }
+  }
+
+  set day(int value) {
+    //como colocar el dia en una feche
+    DateTime newDate =
+        new DateTime(_date.year, _date.month, value, _date.hour, 0, 0);
+
+    if (_minDate.compareTo(newDate) <= 0) {
+      _date = newDate;
+      notifyListeners();
+    }
+  }
+
+  set hour(int value) {
+    DateTime newDate =
+        new DateTime(_date.year, _date.month, _date.day, value, 0, 0);
+    if (_minDate.compareTo(newDate) <= 0) {
+      _date = newDate;
+      notifyListeners();
+    }
+  }
+
+  PageController _pageController = PageController(initialPage: 0);
   List<Category> _categories = [];
 
   TextEditingController get searchController => _searchController;
@@ -100,10 +224,7 @@ class ServicesProvider with ChangeNotifier {
   Future<Service?> getServiceForBooking(int id, String date) async {
     final url = Uri.http('192.168.100.4:8000', '/api/services/$id?date=$date');
     final response = await http.get(url);
-    if(response.statusCode==200){
-    }
+    if (response.statusCode == 200) {}
     return null;
   }
-
-
 }

@@ -1,14 +1,16 @@
 import 'dart:developer';
 import 'dart:core';
+import 'package:agenda_booking/providers/services_provider.dart';
 import 'package:agenda_booking/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:agenda_booking/models/service.dart';
+import 'package:provider/provider.dart';
 import '../widgets/booking_action_button.dart';
 import '../widgets/calendar.dart';
 import 'confirm_booking_modal.dart';
 
 class BookingPage extends StatelessWidget {
-  static final String route = '/booking';
+  static const String route = '/booking';
 
   const BookingPage({Key? key}) : super(key: key);
 
@@ -33,16 +35,16 @@ class BookingPage extends StatelessWidget {
           children: [
             const Expanded(child: _BookingMainContent()),
             BookingActionButton(
-                label:'Book Now',
+                label: 'Book Now',
                 onPressed: () {
-              showModalBottomSheet<void>(
-                context: context,
-                isScrollControlled: true,
-                builder: (BuildContext context) {
-                  return ConfirmBookingModal();
-                },
-              );
-            })
+                  showModalBottomSheet<void>(
+                    context: context,
+                    isScrollControlled: true,
+                    builder: (BuildContext context) {
+                      return const ConfirmBookingModal();
+                    },
+                  );
+                })
           ],
         ),
       ),
@@ -50,23 +52,42 @@ class BookingPage extends StatelessWidget {
   }
 }
 
-
 class _BookingMainContent extends StatelessWidget {
   const _BookingMainContent({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> times = [
-      _BookingTime(time: "10:00 AM", status: _BookingTime.normal),
-      _BookingTime(time: "10:00 AM", status: _BookingTime.normal),
-      _BookingTime(time: "10:00 AM", status: _BookingTime.selected),
-      _BookingTime(time: "10:00 AM", status: _BookingTime.normal),
-      _BookingTime(time: "10:00 AM", status: _BookingTime.normal),
-      _BookingTime(time: "10:00 AM", status: _BookingTime.normal),
-      _BookingTime(time: "10:00 AM", status: _BookingTime.normal),
-      _BookingTime(time: "10:00 AM", status: _BookingTime.blocked),
-      _BookingTime(time: "10:00 AM", status: _BookingTime.normal),
-    ];
+    final servicesProvider = Provider.of<ServicesProvider>(context);
+    List<Widget> times = [];
+    for (var i = 10; i < 20; i++) {
+      final String am = i < 12 ? 'AM' : 'PM';
+      final String hour = i < 10 ? "0$i" : "$i";
+
+      int status = _BookingTime.normal;
+
+      final current = DateTime(
+        servicesProvider.year,
+        servicesProvider.month,
+        servicesProvider.day,
+        i,
+        0,
+        0,
+      );
+
+      if (servicesProvider.currentDate.compareTo(current) == 0) {
+        status = _BookingTime.selected;
+      }
+      //   else if (servicesProvider.minDate.compareTo(current) > 0) {
+      //     status = _BookingTime.blocked;
+      //   }
+
+      times.add(_BookingTime(
+        status: status,
+        time: "$hour:00 $am",
+        onTap: () => servicesProvider.hour = i,
+      ));
+    }
+
     return ListView(
       children: [
         const Calendar(),
@@ -98,11 +119,13 @@ class _BookingMainContent extends StatelessWidget {
 }
 
 class _BookingTime extends StatelessWidget {
-  const _BookingTime({Key? key, required this.time, required this.status})
+  const _BookingTime(
+      {Key? key, required this.time, required this.status, required this.onTap})
       : super(key: key);
 
   final String time;
   final int status;
+  final Function() onTap;
 
   static final int normal = 1;
   static final int selected = 2;
@@ -121,7 +144,7 @@ class _BookingTime extends StatelessWidget {
     return Material(
       borderRadius: BorderRadius.all(Radius.circular(10)),
       child: InkWell(
-        onTap: status == normal ? () {} : null,
+        onTap: status == normal ? onTap : null,
         borderRadius: BorderRadius.all(Radius.circular(10)),
         splashColor: Utils.sencondaryColor,
         child: Ink(

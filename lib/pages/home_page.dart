@@ -1,6 +1,6 @@
 import 'package:agenda_booking/models/service.dart';
 import 'package:agenda_booking/models/category.dart';
-import 'package:agenda_booking/providers/servides_provider.dart';
+import 'package:agenda_booking/providers/services_provider.dart';
 import 'package:agenda_booking/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
