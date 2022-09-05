@@ -7,6 +7,10 @@ import '../models/category.dart';
 import '../models/service.dart';
 
 class ServicesProvider with ChangeNotifier {
+  ServicesProvider() {
+    loadCategories();
+  }
+
   final Map<String, IconData> icons = {
     'scissors': FontAwesome.scissors,
     'knife': RpgAwesome.knife,
@@ -42,7 +46,36 @@ class ServicesProvider with ChangeNotifier {
     'Dom'
   ];
 
-  final DateTime _minDate = new DateTime(
+  bool _isLoadingService = false;
+
+  bool get isLoadingService => _isLoadingService;
+  late Service _bookingService;
+
+  Service get bookingService => _bookingService;
+
+  set loadingService(bool value) {
+    _isLoadingService = value;
+    notifyListeners();
+  }
+
+  Future<void> loadServiceForBooking(Service service) async {
+    _isLoadingService = true;
+    notifyListeners();
+
+    final int year = _date.year;
+    final int month = _date.month;
+    final int day = _date.day;
+    String monthS = month < 10 ? "0$month" : "$month";
+    String dayS = day < 10 ? "0$day" : "$day";
+
+    _bookingService =
+        (await getServiceForBooking(service.id, "$year-$monthS-$dayS"))!;
+
+    _isLoadingService = false;
+    notifyListeners();
+  }
+
+  final DateTime _minDate = DateTime(
     DateTime.now().year,
     DateTime.now().month,
     DateTime.now().day,
@@ -162,10 +195,6 @@ class ServicesProvider with ChangeNotifier {
 
   String get search => _search;
 
-  ServicesProvider() {
-    loadCategories();
-  }
-
   PageController get pageController => _pageController;
   late Category _category;
 
@@ -222,9 +251,17 @@ class ServicesProvider with ChangeNotifier {
   }
 
   Future<Service?> getServiceForBooking(int id, String date) async {
-    final url = Uri.http('192.168.100.4:8000', '/api/services/$id?date=$date');
-    final response = await http.get(url);
-    if (response.statusCode == 200) {}
+    final url = Uri.http('192.168.100.4:8000', '/api/services/$id', {
+      'date': date,
+    });
+    final response = await http.get(url, headers: {
+      'X-Requested-With': 'XMLHttpRequest',
+    });
+
+    if (response.statusCode == 200) {
+      return serviceFromJson(response.body);
+    }
+
     return null;
   }
 }

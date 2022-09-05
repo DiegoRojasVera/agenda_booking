@@ -50,4 +50,6 @@ class Service {
         "category_id": categoryId,
         "stylists": List<dynamic>.from(stylists.map((x) => x.toJson())),
       };
+
+
 }

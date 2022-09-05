@@ -1,22 +1,40 @@
-import 'dart:developer';
-import 'dart:core';
 import 'package:agenda_booking/providers/services_provider.dart';
 import 'package:agenda_booking/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:agenda_booking/models/service.dart';
 import 'package:provider/provider.dart';
+import '../models/stylist.dart';
 import '../widgets/booking_action_button.dart';
 import '../widgets/calendar.dart';
 import 'confirm_booking_modal.dart';
 
-class BookingPage extends StatelessWidget {
+class BookingPage extends StatefulWidget {
   static const String route = '/booking';
 
   const BookingPage({Key? key}) : super(key: key);
 
   @override
+  State<BookingPage> createState() => _BookingPageState();
+}
+
+class _BookingPageState extends State<BookingPage> {
+  @override
+  void initState() {
+    super.initState();
+    () async {
+      await Future.delayed(Duration.zero);
+
+      final service = ModalRoute.of(context)?.settings.arguments as Service;
+      final servicesProvider =
+          Provider.of<ServicesProvider>(context, listen: false);
+      servicesProvider.loadServiceForBooking(service);
+    }();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    Service service = ModalRoute.of(context)?.settings.arguments as Service;
+    final service = ModalRoute.of(context)?.settings.arguments as Service;
+    final servicesProvider = Provider.of<ServicesProvider>(context);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -29,7 +47,10 @@ class BookingPage extends StatelessWidget {
           icon: const Icon(Icons.arrow_back_ios_new_outlined),
         ),
       ),
-      body: Container(
+      body: RefreshIndicator(
+        // el simbolo del cargador
+        color: Utils.sencondaryColor, // color de pensador de recarga
+        onRefresh: () => servicesProvider.loadServiceForBooking(service),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -59,27 +80,26 @@ class _BookingMainContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final servicesProvider = Provider.of<ServicesProvider>(context);
     List<Widget> times = [];
+    //Bloquear fechas no disponible para los estilistas.
+
     for (var i = 10; i < 20; i++) {
       final String am = i < 12 ? 'AM' : 'PM';
       final String hour = i < 10 ? "0$i" : "$i";
 
-      int status = _BookingTime.normal;
+      int status =
+          _BookingTime.normal; // eleccion de estar del boton de horario
 
-      final current = DateTime(
-        servicesProvider.year,
-        servicesProvider.month,
-        servicesProvider.day,
-        i,
-        0,
-        0,
-      );
-
+      final current = DateTime(servicesProvider.year, servicesProvider.month,
+          servicesProvider.day, i, 0, 0);
+      //Si la fecha selecionada es igual a la fecha
+      //actual en el loop se marca como seleccionada.
       if (servicesProvider.currentDate.compareTo(current) == 0) {
         status = _BookingTime.selected;
       }
-      //   else if (servicesProvider.minDate.compareTo(current) > 0) {
-      //     status = _BookingTime.blocked;
-      //   }
+      //la fecha minima debes ser actual
+      if (servicesProvider.minDate.compareTo(current) > 0) {
+        status = _BookingTime.blocked;
+      }
 
       times.add(_BookingTime(
         status: status,
@@ -88,33 +108,49 @@ class _BookingMainContent extends StatelessWidget {
       ));
     }
 
-    return ListView(
-      children: [
-        const Calendar(),
-        const _Subtitle(subtitle: 'Stylists'),
-        const SizedBox(height: 5),
-        StylistsList(
-          stylists: _stylist,
-        ),
-        const SizedBox(height: 10),
-        const _Subtitle(subtitle: 'Available Time'),
-        const SizedBox(height: 10),
-        Container(
-          height: (times.length / 3).ceil() * 50,
-          // da la dimension de las letras de los horarios
-          child: GridView.count(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            crossAxisSpacing: 20,
-            mainAxisSpacing: 10,
-            childAspectRatio: 2.5,
-            crossAxisCount: 3,
-            physics: const NeverScrollableScrollPhysics(),
-            // para no desplazar el scroll por mas que esten aparte
-            children: times,
-          ),
-        ),
-      ],
-    );
+    return servicesProvider.isLoadingService ||
+            servicesProvider.bookingService == null
+        ? Column(
+            children: [
+              Calendar(),
+              //Error en uso de Expanded en ListView
+              Row(
+                children: [
+                  Expanded(
+                    child: CircularProgressIndicator(
+                      color: Utils
+                          .primaryColor, // cambio de color del simbolo del carga
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          )
+        : ListView(
+            children: [
+              const Calendar(),
+              const _Subtitle(subtitle: 'Stylists'),
+              const SizedBox(height: 5),
+              StylistsList(stylists: servicesProvider.bookingService.stylists),
+              const SizedBox(height: 10),
+              const _Subtitle(subtitle: 'Available Time'),
+              const SizedBox(height: 10),
+              Container(
+                height: (times.length / 3).ceil() * 50,
+                // da la dimension de las letras de los horarios
+                child: GridView.count(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  crossAxisSpacing: 20,
+                  mainAxisSpacing: 10,
+                  childAspectRatio: 2.5,
+                  crossAxisCount: 3,
+                  physics: const NeverScrollableScrollPhysics(),
+                  // para no desplazar el scroll por mas que esten aparte
+                  children: times,
+                ),
+              ),
+            ],
+          );
   }
 }
 
@@ -182,29 +218,29 @@ class StylistsList extends StatelessWidget {
       height: 200,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        itemCount: _stylist.length,
+        itemCount: stylists.length,
         itemBuilder: (_, int index) {
           if (index == 0) {
             return Row(
               children: [
                 SizedBox(width: 20),
-                StylistCard(stylist: _stylist[index], isSelected: false),
+                StylistCard(stylist: stylists[index], isSelected: false),
               ],
             );
           }
-          if (index == _stylist.length - 1) {
+          if (index == stylists.length - 1) {
             return Row(
               children: [
                 SizedBox(width: 20),
                 StylistCard(
-                  stylist: _stylist[index],
+                  stylist: stylists[index],
                   isSelected: false,
                 ),
               ],
             );
           }
           return StylistCard(
-            stylist: _stylist[index],
+            stylist: stylists[index],
             isSelected: index == 1,
           );
         },
@@ -239,20 +275,6 @@ class _Subtitle extends StatelessWidget {
 }
 
 //Modelo temporal
-class Stylist {
-  late int id;
-  late String name;
-  late double score;
-
-  Stylist({required this.id, required this.name, required this.score});
-}
-
-List<Stylist> _stylist = [
-  Stylist(name: 'Elly', score: 3.4, id: 1),
-  Stylist(name: 'Ana', score: 3.4, id: 2),
-  Stylist(name: 'Clara', score: 3.4, id: 3),
-  Stylist(name: 'Pepe', score: 3.4, id: 4),
-];
 
 class StylistCard extends StatelessWidget {
   const StylistCard({Key? key, required this.stylist, required this.isSelected})
@@ -283,10 +305,13 @@ class StylistCard extends StatelessWidget {
                 //Fichas con fotos de los stilistas
                 clipBehavior: Clip.hardEdge,
                 decoration: const BoxDecoration(shape: BoxShape.circle),
-                child: const Image(
-                  image: AssetImage('assets/stylist.jpg'),
-                  fit: BoxFit.contain,
+                child: FadeInImage(
+                  placeholder: const AssetImage('assets/stylist.jpg'),
+                  // foto que sale unos segunos para cargar!!
+                  image: NetworkImage(stylist.photo),
+                  fit: BoxFit.cover,
                   width: 100,
+                  height: 100,
                 ),
               ),
               const SizedBox(
