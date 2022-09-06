@@ -297,7 +297,7 @@ class _CategoryPageView extends StatelessWidget {
     return Container(
       alignment: Alignment.topCenter,
       child: FadeInImage(
-        placeholder: AssetImage('assets/haircut.jpg'),
+        placeholder: const AssetImage('assets/haircut.jpg'),
         image: NetworkImage(path),
         fit: BoxFit.contain,
         width: double.infinity,

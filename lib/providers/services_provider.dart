@@ -5,6 +5,7 @@ import 'package:fluttericon/rpg_awesome_icons.dart';
 import 'package:http/http.dart' as http;
 import '../models/category.dart';
 import '../models/service.dart';
+import '../models/stylist.dart';
 
 class ServicesProvider with ChangeNotifier {
   ServicesProvider() {
@@ -46,9 +47,15 @@ class ServicesProvider with ChangeNotifier {
     'Dom'
   ];
 
-  bool _isLoadingService = false;
+  void clean() {
+    _stylist = null;
+    _date = new DateTime(DateTime.now().year, DateTime.now().month,
+        DateTime.now().day, DateTime.now().hour + 2, 0, 0);
+    notifyListeners();
 
-  bool get isLoadingService => _isLoadingService;
+
+  }
+
   late Service _bookingService;
 
   Service get bookingService => _bookingService;
@@ -157,10 +164,20 @@ class ServicesProvider with ChangeNotifier {
     }
   }
 
+  Stylist? _stylist;
+  Stylist? get stylist => _stylist;
+
+  set stylist(Stylist? value) {
+    _stylist = value;
+    print(_stylist?.lockedDates);
+    print(_stylist?.id);
+    notifyListeners();
+  }
+
   set day(int value) {
     //como colocar el dia en una feche
     DateTime newDate =
-        new DateTime(_date.year, _date.month, value, _date.hour, 0, 0);
+        DateTime(_date.year, _date.month, value, _date.hour, 0, 0);
 
     if (_minDate.compareTo(newDate) <= 0) {
       _date = newDate;
@@ -170,7 +187,7 @@ class ServicesProvider with ChangeNotifier {
 
   set hour(int value) {
     DateTime newDate =
-        new DateTime(_date.year, _date.month, _date.day, value, 0, 0);
+        DateTime(_date.year, _date.month, _date.day, value, 0, 0);
     if (_minDate.compareTo(newDate) <= 0) {
       _date = newDate;
       notifyListeners();
@@ -178,11 +195,21 @@ class ServicesProvider with ChangeNotifier {
   }
 
   PageController _pageController = PageController(initialPage: 0);
+  PageController get pageController => _pageController;
+
+  late Category _category;
+  Category get category => _category;
+
   List<Category> _categories = [];
+  List<Category> get categories => _categories;
+
+  bool _isLoadingService = false;
+  bool get isLoadingService => _isLoadingService;
+
 
   TextEditingController get searchController => _searchController;
 
-  List<Category> get categories => _categories;
+
   late String _search;
 
   bool get isLoading => _isLoading;
@@ -195,10 +222,8 @@ class ServicesProvider with ChangeNotifier {
 
   String get search => _search;
 
-  PageController get pageController => _pageController;
-  late Category _category;
 
-  Category get category => _category;
+
 
   set isLoading(bool value) {
     _isLoading = value;
