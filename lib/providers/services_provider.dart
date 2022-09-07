@@ -52,8 +52,6 @@ class ServicesProvider with ChangeNotifier {
     _date = new DateTime(DateTime.now().year, DateTime.now().month,
         DateTime.now().day, DateTime.now().hour + 2, 0, 0);
     notifyListeners();
-
-
   }
 
   late Service _bookingService;
@@ -165,13 +163,42 @@ class ServicesProvider with ChangeNotifier {
   }
 
   Stylist? _stylist;
+
   Stylist? get stylist => _stylist;
 
   set stylist(Stylist? value) {
-    _stylist = value;
-    print(_stylist?.lockedDates);
-    print(_stylist?.id);
+    //Si se canbia de estilista despues de haber elegido una fecha y hora
+
+    int attempts = 0;
+    int startHour = 10;
+    bool isSelectedDateInvalid = false;
+
+    do {
+      isSelectedDateInvalid = hasStylistDateLocked(value!, _date);
+      attempts++;
+
+      if (isSelectedDateInvalid) {
+        hour = _date.hour < 20 ? startHour++ : 10;
+      }
+    } while (isSelectedDateInvalid && attempts < 30);
+    // Si despues de varios intentos no hat fehca para el estilista
+    //
+    if (isSelectedDateInvalid == false) {
+      _stylist = value;
+    }
+
     notifyListeners();
+  }
+
+  bool hasStylistDateLocked(Stylist stylist, DateTime date) {
+    bool isDateLocked = false;
+    int? lockedDate = stylist.lockedDates
+        .where((locked) => locked.compareTo(_date) == 0)
+        .length;
+
+    isDateLocked = lockedDate > 0;
+
+    return isDateLocked;
   }
 
   set day(int value) {
@@ -195,20 +222,22 @@ class ServicesProvider with ChangeNotifier {
   }
 
   PageController _pageController = PageController(initialPage: 0);
+
   PageController get pageController => _pageController;
 
   late Category _category;
+
   Category get category => _category;
 
   List<Category> _categories = [];
+
   List<Category> get categories => _categories;
 
   bool _isLoadingService = false;
+
   bool get isLoadingService => _isLoadingService;
 
-
   TextEditingController get searchController => _searchController;
-
 
   late String _search;
 
@@ -221,9 +250,6 @@ class ServicesProvider with ChangeNotifier {
   bool _isSearchVisible = false;
 
   String get search => _search;
-
-
-
 
   set isLoading(bool value) {
     _isLoading = value;

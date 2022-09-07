@@ -11,6 +11,7 @@ class Stylist {
   String name;
   String photo;
   double score;
+
   List<DateTime> lockedDates;
 
   factory Stylist.fromJson(Map<String, dynamic> json) => Stylist(

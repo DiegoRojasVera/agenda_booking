@@ -30,7 +30,6 @@ class _BookingPageState extends State<BookingPage> {
         context,
         listen: false,
       );
-
       servicesProvider.clean();
       servicesProvider.loadServiceForBooking(service);
     }();
@@ -91,11 +90,12 @@ class _BookingMainContent extends StatelessWidget {
       final String am = i < 12 ? 'AM' : 'PM';
       final String hour = i < 10 ? "0$i" : "$i";
 
-      int status =
-          _BookingTime.normal; // eleccion de estar del boton de horario
+      // eleccion de estar del boton de horario
+      int status = _BookingTime.normal;
       final stylist = servicesProvider.stylist;
       final current = DateTime(servicesProvider.year, servicesProvider.month,
           servicesProvider.day, i, 0, 0);
+
       //Si la fecha selecionada es igual a la fecha
       //actual en el loop se marca como seleccionada.
       if (servicesProvider.currentDate.compareTo(current) == 0) {
@@ -108,6 +108,7 @@ class _BookingMainContent extends StatelessWidget {
 
       if (stylist != null) {
         stylist.lockedDates.forEach((lockedDate) {
+
           if (lockedDate.compareTo(current) == 0) {
             status = _BookingTime.blocked;
           }
