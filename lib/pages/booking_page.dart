@@ -32,6 +32,7 @@ class _BookingPageState extends State<BookingPage> {
       );
       servicesProvider.clean();
       servicesProvider.loadServiceForBooking(service);
+
     }();
   }
 
@@ -108,7 +109,6 @@ class _BookingMainContent extends StatelessWidget {
 
       if (stylist != null) {
         stylist.lockedDates.forEach((lockedDate) {
-
           if (lockedDate.compareTo(current) == 0) {
             status = _BookingTime.blocked;
           }
@@ -131,9 +131,9 @@ class _BookingMainContent extends StatelessWidget {
                 children: [
                   Expanded(
                     child: CircularProgressIndicator(
-                      color: Utils
-                          .primaryColor, // cambio de color del simbolo del carga
-                    ),
+                        color: Utils
+                            .primaryColor // cambio de color del simbolo del carga
+                        ),
                   ),
                 ],
               ),
@@ -144,7 +144,7 @@ class _BookingMainContent extends StatelessWidget {
               const Calendar(),
               const _Subtitle(subtitle: 'Stylists'),
               const SizedBox(height: 5),
-              StylistsList(stylists: servicesProvider.bookingService.stylists),
+              StylistsList(stylists: servicesProvider.bookingService!.stylists),
               const SizedBox(height: 10),
               const _Subtitle(subtitle: 'Available Time'),
               const SizedBox(height: 10),
@@ -226,7 +226,7 @@ class StylistsList extends StatelessWidget {
   final List<Stylist> stylists;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) { // los estilistas
     final _servicesProvider = Provider.of<ServicesProvider>(context);
     return Container(
       height: 200,
@@ -237,6 +237,7 @@ class StylistsList extends StatelessWidget {
           final stylist = stylists[index];
           final isSelected = _servicesProvider.stylist != null &&
               _servicesProvider.stylist?.id == stylist.id;
+
 
           //final isSelected = _servicesProvider.stylist?.id == stylist.id;
 
@@ -317,6 +318,7 @@ class StylistCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
+      //seleccion de estilistas
       child: InkWell(
         borderRadius: const BorderRadius.all(Radius.circular(10.0)),
         onTap: isSelected ? null : onTap,

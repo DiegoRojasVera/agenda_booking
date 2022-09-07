@@ -104,7 +104,7 @@ class _CalendarDay extends StatelessWidget {
             Text(weekDay),
             Text(
               "$day",
-              style: const TextStyle(fontSize: 32.0),// tamaños de letras del calendario
+              style: const TextStyle(fontSize: 35.0),// tamaños de letras del calendario
             ),
             const SizedBox(height: 10.0),
             isSelected

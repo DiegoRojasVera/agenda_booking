@@ -54,9 +54,9 @@ class ServicesProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  late Service _bookingService;
+  Service? _bookingService;
 
-  Service get bookingService => _bookingService;
+  Service? get bookingService => _bookingService;
 
   set loadingService(bool value) {
     _isLoadingService = value;
@@ -88,7 +88,7 @@ class ServicesProvider with ChangeNotifier {
     0,
     0,
   );
-  DateTime _date = new DateTime(
+  DateTime _date = DateTime(
     DateTime.now().year,
     DateTime.now().month,
     DateTime.now().day,
@@ -168,17 +168,20 @@ class ServicesProvider with ChangeNotifier {
 
   set stylist(Stylist? value) {
     //Si se canbia de estilista despues de haber elegido una fecha y hora
-
     int attempts = 0;
     int startHour = 10;
     bool isSelectedDateInvalid = false;
 
+
     do {
       isSelectedDateInvalid = hasStylistDateLocked(value!, _date);
       attempts++;
+      print("aca");
+//      _isLoadingService = true;
 
       if (isSelectedDateInvalid) {
         hour = _date.hour < 20 ? startHour++ : 10;
+
       }
     } while (isSelectedDateInvalid && attempts < 30);
     // Si despues de varios intentos no hat fehca para el estilista
@@ -187,18 +190,18 @@ class ServicesProvider with ChangeNotifier {
       _stylist = value;
     }
 
+
     notifyListeners();
   }
 
   bool hasStylistDateLocked(Stylist stylist, DateTime date) {
-    bool isDateLocked = false;
-    int? lockedDate = stylist.lockedDates
+    bool isDateInvalid = false;
+    int lockedDates = stylist.lockedDates
         .where((locked) => locked.compareTo(_date) == 0)
         .length;
 
-    isDateLocked = lockedDate > 0;
-
-    return isDateLocked;
+    isDateInvalid = lockedDates > 0;
+    return isDateInvalid;
   }
 
   set day(int value) {
@@ -284,11 +287,12 @@ class ServicesProvider with ChangeNotifier {
     notifyListeners();
 
     _categories = await getCategoriesWithServices();
-    _category = (_categories.isNotEmpty ? _categories[0] : null)!;
+    _category = (_categories.length > 0 ? _categories[0] : null)!;
 
     _isLoading = false;
     notifyListeners();
   }
+
 
   Future<List<Category>> getCategoriesWithServices() async {
     final url = Uri.http('192.168.100.4:8000', '/api/services');
