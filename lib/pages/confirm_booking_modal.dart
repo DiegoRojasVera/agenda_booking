@@ -1,5 +1,7 @@
+import 'package:agenda_booking/providers/services_provider.dart';
 import'package:flutter/material.dart';
-
+import 'package:provider/provider.dart';
+import '../utils/utils.dart';
 import '../widgets/booking_action_button.dart';
 import 'booking_page.dart';
 import 'finish_page.dart';
@@ -8,28 +10,35 @@ class ConfirmBookingModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final servicesProvider= Provider.of<ServicesProvider>(context);
+    final date= formatDate(servicesProvider.currentDate);
+    final stylist = servicesProvider.stylist?.name;
+    final price= servicesProvider.bookingService?.price;
+
     return Container(
-      height: MediaQuery.of(context).size.height * 0.6,//el tamaño de la ventana que se abre
+      height: MediaQuery.of(context).size.height * 0.7,//el tamaño de la ventana que se abre
       //pantalla que sale al oprimir Book Now
       color: Colors.white,
       child: ListView(
         padding: const EdgeInsets.all(20),
         children: [
-          _BookingTitle(value: 'Confirm'),
-          TextField(
+          const _BookingTitle(value: 'Confirm'),
+          const TextField(
             decoration: InputDecoration(
               labelText: 'Name',
             ),
           ),
-          TextField(
+          const TextField(
             decoration: InputDecoration(
               labelText: 'Phone',
             ),
           ),
           SizedBox(height: 50,),
-          _BookingInfo(value: "10/04/2021 10:00AM"),
+          _BookingInfo(value: date),
+          SizedBox(height: 5),
+          _BookingInfo(value: "With: $stylist"),
           SizedBox(height: 10),
-          _BookingInfo(value: "Price:\$45"),
+          _BookingInfo(value: "Price:\$$price"),
           SizedBox(height: 50,),
           BookingActionButton(
             label: 'Book Now',

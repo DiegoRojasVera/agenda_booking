@@ -172,7 +172,6 @@ class ServicesProvider with ChangeNotifier {
     int startHour = 10;
     bool isSelectedDateInvalid = false;
 
-
     do {
       isSelectedDateInvalid = hasStylistDateLocked(value!, _date);
       attempts++;
@@ -181,7 +180,6 @@ class ServicesProvider with ChangeNotifier {
 
       if (isSelectedDateInvalid) {
         hour = _date.hour < 20 ? startHour++ : 10;
-
       }
     } while (isSelectedDateInvalid && attempts < 30);
     // Si despues de varios intentos no hat fehca para el estilista
@@ -189,7 +187,6 @@ class ServicesProvider with ChangeNotifier {
     if (isSelectedDateInvalid == false) {
       _stylist = value;
     }
-
 
     notifyListeners();
   }
@@ -282,6 +279,14 @@ class ServicesProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  bool get canFinalizeAppointment {
+    if (_date == null) return false;
+    if (_stylist == null) return false;
+    if (hasStylistDateLocked(_stylist!, _date)) return false;
+
+    return true;
+  }
+
   Future<void> loadCategories() async {
     _isLoading = true;
     notifyListeners();
@@ -292,7 +297,6 @@ class ServicesProvider with ChangeNotifier {
     _isLoading = false;
     notifyListeners();
   }
-
 
   Future<List<Category>> getCategoriesWithServices() async {
     final url = Uri.http('192.168.100.4:8000', '/api/services');

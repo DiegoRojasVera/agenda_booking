@@ -32,7 +32,6 @@ class _BookingPageState extends State<BookingPage> {
       );
       servicesProvider.clean();
       servicesProvider.loadServiceForBooking(service);
-
     }();
   }
 
@@ -62,15 +61,17 @@ class _BookingPageState extends State<BookingPage> {
             const Expanded(child: _BookingMainContent()),
             BookingActionButton(
                 label: 'Book Now',
-                onPressed: () {
-                  showModalBottomSheet<void>(
-                    context: context,
-                    isScrollControlled: true,
-                    builder: (BuildContext context) {
-                      return const ConfirmBookingModal();
-                    },
-                  );
-                })
+                onPressed: !servicesProvider.canFinalizeAppointment
+                    ? null
+                    : () {
+                        showModalBottomSheet<void>(
+                          context: context,
+                          isScrollControlled: true,
+                          builder: (BuildContext context) {
+                            return const ConfirmBookingModal();
+                          },
+                        );
+                      })
           ],
         ),
       ),
@@ -88,9 +89,6 @@ class _BookingMainContent extends StatelessWidget {
     //Bloquear fechas no disponible para los estilistas.
     //Horario de atencion de 10:00 am hasta las 8:pm
     for (var i = 10; i < 20; i++) {
-      final String am = i < 12 ? 'AM' : 'PM';
-      final String hour = i < 10 ? "0$i" : "$i";
-
       // eleccion de estar del boton de horario
       int status = _BookingTime.normal;
       final stylist = servicesProvider.stylist;
@@ -117,7 +115,8 @@ class _BookingMainContent extends StatelessWidget {
 
       times.add(_BookingTime(
         status: status,
-        time: "$hour:00 $am",
+        //time: "$hour:00 $am",
+        time: formatHour(current),
         onTap: () => servicesProvider.hour = i,
       ));
     }
@@ -226,7 +225,8 @@ class StylistsList extends StatelessWidget {
   final List<Stylist> stylists;
 
   @override
-  Widget build(BuildContext context) { // los estilistas
+  Widget build(BuildContext context) {
+    // los estilistas
     final _servicesProvider = Provider.of<ServicesProvider>(context);
     return Container(
       height: 200,
@@ -237,7 +237,6 @@ class StylistsList extends StatelessWidget {
           final stylist = stylists[index];
           final isSelected = _servicesProvider.stylist != null &&
               _servicesProvider.stylist?.id == stylist.id;
-
 
           //final isSelected = _servicesProvider.stylist?.id == stylist.id;
 
