@@ -1,6 +1,7 @@
 import 'package:agenda_booking/pages/booking_page.dart';
 import 'package:agenda_booking/pages/finish_page.dart';
 import 'package:agenda_booking/pages/home_page.dart';
+import 'package:agenda_booking/providers/booking_provider.dart';
 import 'package:agenda_booking/providers/services_provider.dart';
 import 'package:agenda_booking/utils/utils.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +13,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [ChangeNotifierProvider(create: (_) => ServicesProvider())],
+      providers: [
+        ChangeNotifierProvider(create: (_) => ServicesProvider()),
+        ChangeNotifierProvider(create: (_) => BookingProvider())
+      ],
       child: MaterialApp(
         title: 'Agenda App',
         initialRoute: HomePage.route,

@@ -221,7 +221,7 @@ class ServicesProvider with ChangeNotifier {
     }
   }
 
-  PageController _pageController = PageController(initialPage: 0);
+  PageController _pageController = PageController(initialPage: -1);
 
   PageController get pageController => _pageController;
 
@@ -275,7 +275,7 @@ class ServicesProvider with ChangeNotifier {
     int index = _categories.indexOf(category);
     _category = category;
     _pageController.animateToPage(index,
-        duration: Duration(milliseconds: 200), curve: Curves.easeIn);
+        duration: Duration(milliseconds: 5), curve: Curves.easeIn);
     notifyListeners();
   }
 

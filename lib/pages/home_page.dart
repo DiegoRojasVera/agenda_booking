@@ -160,7 +160,7 @@ class _ServicesList extends StatelessWidget {
     return Container(
       height: 500,
       child: ListView.separated(
-        padding: EdgeInsets.symmetric(horizontal: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 20),
         itemBuilder: (_, int index) {
           Service service = services[index];
           return ListTile(
@@ -198,42 +198,59 @@ class _CategoriesCarousel extends StatelessWidget {
   Widget build(BuildContext context) {
     final ServicesProvider servicesProvider =
         Provider.of<ServicesProvider>(context);
-    return Container(
+    return SizedBox(
         height: 90, // modificar el espacio de los iconos de servicios
-        child: ListView.separated(
-          scrollDirection: Axis.horizontal,
-          itemCount: categories.length,
-          itemBuilder: (_, int index) {
-            Category category = categories[index];
-            final categoryItem = _CategoryItem(
-              icon: servicesProvider.icons[category.icon]!,
-              label: category.name,
-              onTap: () => servicesProvider.selectCategory(category),
-              isSelected: servicesProvider.category.id == category.id,
-            );
+        child: NewWidget1(categories: categories, servicesProvider: servicesProvider));
+  }
+}
 
-            if (index == 0) {
-              return Row(
-                children: [
-                  const SizedBox(width: 10),
-                  categoryItem,
-                ],
-              );
-            }
-            if (index == categories.length - 1) {
-              return Row(
-                children: [
-                  categoryItem,
-                  const SizedBox(width: 20),
-                ],
-              );
-            }
-            return categoryItem;
-          },
-          separatorBuilder: (_, int index) {
-            return const SizedBox(width: 15); // se paracion entre los iconos
-          },
-        ));
+class NewWidget1 extends StatelessWidget {
+  const NewWidget1({
+    Key? key,
+    required this.categories,
+    required this.servicesProvider,
+  }) : super(key: key);
+
+  final List<Category> categories;
+  final ServicesProvider servicesProvider;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.separated(
+
+      scrollDirection: Axis.horizontal,
+      itemCount: categories.length,
+      itemBuilder: (_, int index) {
+        Category category = categories[index];
+        final categoryItem = _CategoryItem(
+          icon: servicesProvider.icons[category.icon]!,
+          label: category.name,
+          onTap: () => servicesProvider.selectCategory(category),
+          isSelected: servicesProvider.category.id == category.id,
+        );
+
+        if (index == 0) {
+          return Row(
+            children: [
+              const SizedBox(width: 10),
+              categoryItem,
+            ],
+          );
+        }
+        if (index == categories.length - 1) {
+          return Row(
+            children: [
+              categoryItem,
+              const SizedBox(width: 20),
+            ],
+          );
+        }
+        return categoryItem;
+      },
+      separatorBuilder: (_, int index) {
+        return const SizedBox(width: 15); // se paracion entre los iconos
+      },
+    );
   }
 }
 
