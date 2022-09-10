@@ -74,6 +74,7 @@ class __PageViewCategoriesState extends State<_PageViewCategories> {
 
   @override
   Widget build(BuildContext context) {
+    // modificacion
     final servicesProvider = Provider.of<ServicesProvider>(context);
     servicesProvider.pageController = PageController(initialPage: 0);
 
