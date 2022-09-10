@@ -43,7 +43,7 @@ class Calendar extends StatelessWidget {
           children: [
              IconButton(//Botones para cambio de mes
               icon: const Icon(Icons.arrow_left_outlined, size: 30.0),
-              color: Utils.sencondaryColor,
+              color: Utils.secondaryColor,
               onPressed: () {
                 servicesProvider.changeMonth(false);
               },
@@ -56,7 +56,7 @@ class Calendar extends StatelessWidget {
             const SizedBox(width: 15.0),
             IconButton(
               icon: const Icon(Icons.arrow_right_outlined, size: 30.0),
-              color: Utils.sencondaryColor,
+              color: Utils.secondaryColor,
               onPressed: () {
                 servicesProvider.changeMonth(true);
               },
@@ -112,7 +112,7 @@ class _CalendarDay extends StatelessWidget {
               height: 11.0,
               width: 50.0,
               decoration: BoxDecoration(
-                color: Utils.sencondaryColor,
+                color: Utils.secondaryColor,
               ),
             )
                 : Container(

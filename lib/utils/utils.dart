@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 
 class Utils {
-  static final Color? primaryColor = Colors.red[50];
-  static final Color? searchbutton = Colors.red[100];
-  static final Color sencondaryColor = Color.fromARGB(120, 82, 61, 1);
-  static final Color grayColor = Color.fromARGB(92, 161, 161, 137);
+  static final Color primaryColor = Color.fromRGBO(233, 189, 160, 1.0);
+  static final Color secondaryColor = Color.fromRGBO(120, 82, 61, 1.0);
+  static final Color grayColor = Color.fromRGBO(190, 190, 190, 1.0);
 }
 
 String formatDate(DateTime date) {
@@ -26,5 +25,6 @@ String formatTimestamp(DateTime date) {
   final hour = date.hour < 10 ? "0${date.hour}" : "${date.hour}";
   final minute = date.minute < 10 ? "0${date.minute}" : "${date.minute}";
 
+  // 2021-06-24 20:00:00
   return "${date.year}-$month-$day $hour:$minute:00";
 }

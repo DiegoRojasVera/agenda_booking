@@ -25,20 +25,20 @@ class MyApp extends StatelessWidget {
           primaryColor: Utils.primaryColor,
           textTheme: ThemeData.light().textTheme.copyWith(
                 bodyText1: ThemeData.light().textTheme.bodyText1?.copyWith(
-                      color: Utils.sencondaryColor,
+                      color: Utils.secondaryColor,
                     ),
                 bodyText2: ThemeData.light().textTheme.bodyText1?.copyWith(
-                      color: Utils.sencondaryColor,
+                      color: Utils.secondaryColor,
                     ),
                 subtitle1: ThemeData.light().textTheme.subtitle1?.copyWith(
-                      color: Utils.sencondaryColor,
+                      color: Utils.secondaryColor,
                     ),
                 headline6: ThemeData.light().textTheme.headline6!.copyWith(
-                      color: Utils.sencondaryColor,
+                      color: Utils.secondaryColor,
                       fontWeight: FontWeight.w400,
                     ),
                 headline5: ThemeData.light().textTheme.headline5!.copyWith(
-                      color: Utils.sencondaryColor,
+                      color: Utils.secondaryColor,
                       fontWeight: FontWeight.w400,
                     ),
               ),

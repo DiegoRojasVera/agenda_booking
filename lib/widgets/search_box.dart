@@ -31,7 +31,7 @@ class SearchBox extends StatelessWidget {
                 color: Colors.white60,
                 borderRadius: BorderRadius.all(Radius.circular(30)),
                 boxShadow: [
-                  BoxShadow(color: Utils.sencondaryColor, blurRadius: 5),
+                  BoxShadow(color: Utils.secondaryColor, blurRadius: 5),
                 ]),
             child: TextField(
               onChanged: (String value) {

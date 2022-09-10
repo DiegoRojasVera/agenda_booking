@@ -1,3 +1,4 @@
+import 'package:agenda_booking/providers/booking_provider.dart';
 import 'package:agenda_booking/providers/services_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -12,9 +13,13 @@ class ConfirmBookingModal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final servicesProvider = Provider.of<ServicesProvider>(context);
+    final bookingProvider = Provider.of<BookingProvider>(context);
     final date = formatDate(servicesProvider.currentDate);
     final stylist = servicesProvider.stylist?.name;
     final price = servicesProvider.bookingService?.price;
+
+    bookingProvider.initData(servicesProvider.stylist!.id,
+        servicesProvider.bookingService!.id, servicesProvider.currentDate);
 
     return Container(
       height: MediaQuery.of(context).size.height *
@@ -25,37 +30,56 @@ class ConfirmBookingModal extends StatelessWidget {
         padding: const EdgeInsets.all(20),
         children: [
           const _BookingTitle(value: 'Confirm'),
-          const TextField(
+          TextField(
+            onChanged: (String value) {
+              bookingProvider.name = value;
+            },
             decoration: InputDecoration(
               labelText: 'Name',
+              errorText: bookingProvider.nameError,
             ),
           ),
-          const TextField(
+          TextField(
+            onChanged: (String value) {
+              bookingProvider.phone = value;
+            },
             decoration: InputDecoration(
               labelText: 'Phone',
+              errorText: bookingProvider.phoneError,
             ),
           ),
-          SizedBox(
-            height: 50,
-          ),
+          const SizedBox(height: 50),
           _BookingInfo(value: date),
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           _BookingInfo(value: "With: $stylist"),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           _BookingInfo(value: "Price:\$$price"),
-          SizedBox(
-            height: 50,
-          ),
-          BookingActionButton(
-            label: 'Book Now',
-            onPressed: () {
-              Navigator.pop(context);
-              Navigator.of(context).pushReplacementNamed(FinishPage.route);
-            },
-          )
+          const SizedBox(height: 50),
+          bookingProvider.isLoading
+              ? const Center(
+                  child: CircularProgressIndicator(),
+                )
+              : BookingActionButton(
+                  label: 'Book Now',
+                  onPressed: bookingProvider.canSend
+                      ? () => sendResquest(context, bookingProvider)
+                      : null)
         ],
       ),
     );
+  }
+
+  void sendResquest(
+      BuildContext context, BookingProvider bookingProvider) async {
+    bookingProvider.isLoading = true;
+    final success = await bookingProvider.save();
+    bookingProvider.isLoading = false;
+
+    if (success) {
+      bookingProvider.clean();
+      Navigator.pop(context);
+      Navigator.of(context).pushReplacementNamed(FinishPage.route);
+    }
   }
 }
 

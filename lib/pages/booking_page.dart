@@ -55,7 +55,7 @@ class _BookingPageState extends State<BookingPage> {
       ),
       body: RefreshIndicator(
         onRefresh: () => servicesProvider.loadServiceForBooking(service),
-         color: Utils.sencondaryColor,
+         color: Utils.secondaryColor,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -71,7 +71,7 @@ class _BookingPageState extends State<BookingPage> {
                         context: context,
                         isScrollControlled: true,
                         builder: (BuildContext context) {
-                          return ConfirmBookingModal();
+                          return const ConfirmBookingModal();
                         },
                       );
                     },
@@ -124,12 +124,12 @@ class _BookingMainContent extends StatelessWidget {
             servicesProvider.bookingService == null
         ? Column(
             children: [
-              Calendar(),
+              const Calendar(),
               Expanded(
                 child: Center(
                   child: CircularProgressIndicator(
                     valueColor: AlwaysStoppedAnimation<Color>(
-                      Utils.sencondaryColor,
+                      Utils.secondaryColor,
                     ),
                   ),
                 ),
@@ -187,22 +187,22 @@ class _BookingTime extends StatelessWidget {
     Color textColor = Colors.white;
 
     if (status == selected) {
-      backgroundColor = Utils.sencondaryColor;
+      backgroundColor = Utils.secondaryColor;
     } else if (status == blocked) {
       backgroundColor = Utils.grayColor;
     }
 
     return Material(
-      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+      borderRadius: const BorderRadius.all(Radius.circular(10.0)),
       child: InkWell(
         onTap: status == normal ? onTap : null,
-        borderRadius: BorderRadius.all(Radius.circular(10.0)),
-        splashColor: Utils.sencondaryColor,
+        borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+        splashColor: Utils.secondaryColor,
         child: Ink(
-          padding: EdgeInsets.all(10),
+          padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
             color: backgroundColor,
-            borderRadius: BorderRadius.all(Radius.circular(10.0)),
+            borderRadius: const BorderRadius.all(Radius.circular(10.0)),
           ),
           child: Center(
             child: Text(
@@ -231,7 +231,7 @@ class _StylistsList extends StatelessWidget {
   Widget build(BuildContext context) {
     final _servicesProvider = Provider.of<ServicesProvider>(context);
 
-    return Container(
+    return SizedBox(
       height: 200.0,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,

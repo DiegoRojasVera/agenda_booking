@@ -26,9 +26,11 @@ class BookingProvider with ChangeNotifier {
   Validation _name = Validation();
 
   String get name => _name.value!;
+
   String? get nameError => _name.error;
 
   set name(String value) {
+    // correccion del nombre
     String? errorLength = Validation.hasValidLength(value, min: 5, max: 30);
 
     if (errorLength != null) {
@@ -42,11 +44,12 @@ class BookingProvider with ChangeNotifier {
 
   Validation _phone = Validation();
 
-  // String get phone => _phone.value;
-  // String? get phoneError => _phone.error;
+  String? get phone => _phone.value;
 
-  set phone(String value) {
-    String? errorLength = Validation.hasValidLength(value, min: 7, max: 20);
+  String? get phoneError => _phone.error;
+
+  set phone(String? value) {
+    String? errorLength = Validation.hasValidLength(value!, min: 7, max: 20);
 
     if (errorLength != null) {
       _phone = Validation(error: errorLength);
@@ -77,7 +80,7 @@ class BookingProvider with ChangeNotifier {
   }
 
   Future<bool> save() async {
-    final url = Uri.http('192.168.0.18:8000', '/api/services');
+    final url = Uri.http('192.168.100.4:8000', '/api/services');
     final Map<String, dynamic> data = {
       'client': {
         'name': _name.value,
@@ -95,7 +98,9 @@ class BookingProvider with ChangeNotifier {
       },
       body: json.encode(data),
     );
-
+    print(data);
+    print(response.statusCode);
+    print(response.body);
     return response.statusCode == 200;
   }
 }

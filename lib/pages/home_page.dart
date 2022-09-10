@@ -40,7 +40,7 @@ class _HomePageState extends State<HomePage> {
           ? Center(
         child: CircularProgressIndicator(
           valueColor: AlwaysStoppedAnimation<Color>(
-            Utils.sencondaryColor,
+            Utils.secondaryColor,
           ),
         ),
       )
@@ -207,7 +207,7 @@ class _ServicesList extends StatelessWidget {
         },
         separatorBuilder: (_, int index) {
           return Divider(
-            color: Utils.sencondaryColor,
+            color: Utils.secondaryColor,
           );
         },
         itemCount: services.length,
@@ -296,12 +296,12 @@ class _CategoryItem extends StatelessWidget {
               height: 70.0,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: isSelected ? Utils.sencondaryColor : Utils.primaryColor,
+                color: isSelected ? Utils.secondaryColor : Utils.primaryColor,
               ),
               child: Icon(
                 icon,
                 size: 44.0,
-                color: isSelected ? Colors.white : Utils.sencondaryColor,
+                color: isSelected ? Colors.white : Utils.secondaryColor,
               ),
             ),
             Text(

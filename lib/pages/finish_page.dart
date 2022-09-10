@@ -11,7 +11,7 @@ class FinishPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final title = Theme.of(context).textTheme.headline3!.copyWith(
           fontWeight: FontWeight.w800,
-          color: Utils.sencondaryColor,
+          color: Utils.secondaryColor,
         );
     final subtitle = Theme.of(context)
         .textTheme

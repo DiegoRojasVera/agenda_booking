@@ -21,8 +21,7 @@ class BookingActionButton extends StatelessWidget {
         child: ElevatedButton(
           onPressed: onPressed, //Boton del socalo de abajo
           style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 70),
-              primary: Utils.sencondaryColor,
+              padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 70), backgroundColor: Utils.secondaryColor,
               shape: const StadiumBorder()),
           child:  Text(label,
               style: const TextStyle(fontSize: 20.0, fontWeight: FontWeight.w300)),
