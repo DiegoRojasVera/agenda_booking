@@ -8,10 +8,6 @@ import '../models/service.dart';
 import '../models/stylist.dart';
 
 class ServicesProvider with ChangeNotifier {
-  ServicesProvider() {
-    loadCategories();
-  }
-
   final Map<String, IconData> icons = {
     'scissors': FontAwesome.scissors,
     'knife': RpgAwesome.knife,
@@ -47,21 +43,28 @@ class ServicesProvider with ChangeNotifier {
     'Dom'
   ];
 
+  get isSearchVisible => null;
+
+  set search(String search) {}
+
   void clean() {
     _stylist = null;
     _date = new DateTime(DateTime.now().year, DateTime.now().month,
         DateTime.now().day, DateTime.now().hour + 2, 0, 0);
+
+    notifyListeners();
+  }
+
+  bool _isLoadingService = false;
+  bool get isLoadingService => _isLoadingService;
+
+  set isLoadingService(bool value) {
+    _isLoadingService = value;
     notifyListeners();
   }
 
   Service? _bookingService;
-
   Service? get bookingService => _bookingService;
-
-  set loadingService(bool value) {
-    _isLoadingService = value;
-    notifyListeners();
-  }
 
   Future<void> loadServiceForBooking(Service service) async {
     _isLoadingService = true;
@@ -73,14 +76,16 @@ class ServicesProvider with ChangeNotifier {
     String monthS = month < 10 ? "0$month" : "$month";
     String dayS = day < 10 ? "0$day" : "$day";
 
-    _bookingService =
-        (await getServiceForBooking(service.id, "$year-$monthS-$dayS"))!;
+    _bookingService = await getServiceForBooking(
+      service.id,
+      "$year-$monthS-$dayS",
+    );
 
     _isLoadingService = false;
     notifyListeners();
   }
 
-  final DateTime _minDate = DateTime(
+  final DateTime _minDate = new DateTime(
     DateTime.now().year,
     DateTime.now().month,
     DateTime.now().day,
@@ -88,7 +93,7 @@ class ServicesProvider with ChangeNotifier {
     0,
     0,
   );
-  DateTime _date = DateTime(
+  DateTime _date =  DateTime(
     DateTime.now().year,
     DateTime.now().month,
     DateTime.now().day,
@@ -98,20 +103,17 @@ class ServicesProvider with ChangeNotifier {
   );
 
   DateTime get currentDate => _date;
-
   DateTime get minDate => _minDate;
 
   int get year => _date.year;
-
   int get month => _date.month;
-
   int get day => _date.day;
 
-  int get CountMontDays {
+  int get countMonthDays {
     return DateTime(_date.year, _date.month + 1, 0).day;
   }
 
-  void subMonth(args) {
+  void subMonth() {
     notifyListeners();
   }
 
@@ -121,7 +123,7 @@ class ServicesProvider with ChangeNotifier {
     if (!add && _date.month == 1) {
       year--;
     } else if (add && _date.month == 12) {
-      year--;
+      year++;
     }
 
     int month = add ? _date.month + 1 : _date.month - 1;
@@ -147,11 +149,36 @@ class ServicesProvider with ChangeNotifier {
       hour = _minDate.hour;
     }
 
+    DateTime newDate = new DateTime(year, month, day, hour, 0, 0);
+
+    if (_minDate.compareTo(newDate) <= 0) {
+      _date = newDate;
+      notifyListeners();
+    }
+  }
+
+  set day(int value) {
+    DateTime newDate =  DateTime(
+      _date.year,
+      _date.month,
+      value,
+      _date.hour,
+      0,
+      0,
+    );
+
+    if (_minDate.compareTo(newDate) <= 0) {
+      _date = newDate;
+      notifyListeners();
+    }
+  }
+
+  set hour(int value) {
     DateTime newDate = new DateTime(
-      year,
-      month,
-      day, // Al cambiar el mes, poner el dia 1
-      hour,
+      _date.year,
+      _date.month,
+      _date.day,
+      value,
       0,
       0,
     );
@@ -163,11 +190,11 @@ class ServicesProvider with ChangeNotifier {
   }
 
   Stylist? _stylist;
-
   Stylist? get stylist => _stylist;
 
   set stylist(Stylist? value) {
-    //Si se canbia de estilista despues de haber elegido una fecha y hora
+    // Si se cambia de estilista después de haber elegido
+    // una fecha y hora se debe validar esa fecha.
     int attempts = 0;
     int startHour = 10;
     bool isSelectedDateInvalid = false;
@@ -175,15 +202,14 @@ class ServicesProvider with ChangeNotifier {
     do {
       isSelectedDateInvalid = hasStylistDateLocked(value!, _date);
       attempts++;
-      print("aca");
-//      _isLoadingService = true;
 
       if (isSelectedDateInvalid) {
         hour = _date.hour < 20 ? startHour++ : 10;
       }
     } while (isSelectedDateInvalid && attempts < 30);
-    // Si despues de varios intentos no hat fehca para el estilista
-    //
+
+    // Si después de varios intentos no hay fechas
+    // disponibles No se selecciona el estilista.
     if (isSelectedDateInvalid == false) {
       _stylist = value;
     }
@@ -201,80 +227,26 @@ class ServicesProvider with ChangeNotifier {
     return isDateInvalid;
   }
 
-  set day(int value) {
-    //como colocar el dia en una feche
-    DateTime newDate =
-        DateTime(_date.year, _date.month, value, _date.hour, 0, 0);
-
-    if (_minDate.compareTo(newDate) <= 0) {
-      _date = newDate;
-      notifyListeners();
-    }
-  }
-
-  set hour(int value) {
-    DateTime newDate =
-        DateTime(_date.year, _date.month, _date.day, value, 0, 0);
-    if (_minDate.compareTo(newDate) <= 0) {
-      _date = newDate;
-      notifyListeners();
-    }
-  }
-
-  PageController _pageController = PageController(initialPage: -1);
-
-  PageController get pageController => _pageController;
-
-  late Category _category;
-
-  Category get category => _category;
-
   List<Category> _categories = [];
-
   List<Category> get categories => _categories;
 
-  bool _isLoadingService = false;
-
-  bool get isLoadingService => _isLoadingService;
-
-  TextEditingController get searchController => _searchController;
-
-  late String _search;
-
-  bool get isLoading => _isLoading;
-
-  bool get isSearchVisible => _isSearchVisible;
   bool _isLoading = false;
-  final TextEditingController _searchController =
-      TextEditingController(text: '');
-  bool _isSearchVisible = false;
-
-  String get search => _search;
+  bool get isLoading => _isLoading;
 
   set isLoading(bool value) {
     _isLoading = value;
     notifyListeners();
   }
 
-  set search(String value) {
-    _search = value;
-    notifyListeners();
-  }
+  PageController? pageController;
 
-  set isSearchVisible(bool value) {
-    _isSearchVisible = value;
-
-    if (value = false) {
-      _searchController.dispose();
-      _search = '';
-    }
-    notifyListeners();
-  }
+  Category? _category;
+  Category? get category => _category;
 
   void selectCategory(Category category) {
     int index = _categories.indexOf(category);
     _category = category;
-    _pageController.animateToPage(index,
+    pageController?.animateToPage(index,
         duration: Duration(milliseconds: 5), curve: Curves.easeIn);
     notifyListeners();
   }
@@ -283,8 +255,15 @@ class ServicesProvider with ChangeNotifier {
     if (_date == null) return false;
     if (_stylist == null) return false;
     if (hasStylistDateLocked(_stylist!, _date)) return false;
-
     return true;
+  }
+
+  void cleanAll() {
+    _categories = [];
+    _category = null;
+    _stylist = null;
+    _bookingService = null;
+    notifyListeners();
   }
 
   Future<void> loadCategories() async {

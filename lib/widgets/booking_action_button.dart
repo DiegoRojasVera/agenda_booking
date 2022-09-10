@@ -25,7 +25,7 @@ class BookingActionButton extends StatelessWidget {
               primary: Utils.sencondaryColor,
               shape: const StadiumBorder()),
           child:  Text(label,
-              style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w300)),
+              style: const TextStyle(fontSize: 20.0, fontWeight: FontWeight.w300)),
         ),
       ),
     );

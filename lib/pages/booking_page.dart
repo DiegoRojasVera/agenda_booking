@@ -11,10 +11,10 @@ import 'confirm_booking_modal.dart';
 class BookingPage extends StatefulWidget {
   static const String route = '/booking';
 
-  const BookingPage({Key? key}) : super(key: key);
+  const BookingPage({super.key});
 
   @override
-  State<BookingPage> createState() => _BookingPageState();
+  _BookingPageState createState() => _BookingPageState();
 }
 
 class _BookingPageState extends State<BookingPage> {
@@ -30,6 +30,7 @@ class _BookingPageState extends State<BookingPage> {
         context,
         listen: false,
       );
+
       servicesProvider.clean();
       servicesProvider.loadServiceForBooking(service);
     }();
@@ -39,39 +40,42 @@ class _BookingPageState extends State<BookingPage> {
   Widget build(BuildContext context) {
     final service = ModalRoute.of(context)?.settings.arguments as Service;
     final servicesProvider = Provider.of<ServicesProvider>(context);
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         elevation: 0.0,
-        backgroundColor: Utils.primaryColor,
         title: const Text('Set Appointment'),
+        backgroundColor: Utils.primaryColor,
         centerTitle: true,
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
-          icon: const Icon(Icons.arrow_back_ios_new_outlined),
+          icon: const Icon(Icons.arrow_back_ios),
         ),
       ),
       body: RefreshIndicator(
-        // el simbolo del cargador
-        color: Utils.sencondaryColor, // color de pensador de recarga
         onRefresh: () => servicesProvider.loadServiceForBooking(service),
+         color: Utils.sencondaryColor,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Expanded(child: _BookingMainContent()),
+            Expanded(
+              child: _BookingMainContent(),
+            ),
             BookingActionButton(
-                label: 'Book Now',
-                onPressed: !servicesProvider.canFinalizeAppointment
-                    ? null
-                    : () {
-                        showModalBottomSheet<void>(
-                          context: context,
-                          isScrollControlled: true,
-                          builder: (BuildContext context) {
-                            return const ConfirmBookingModal();
-                          },
-                        );
-                      })
+              label: 'Book Now',
+              onPressed: !servicesProvider.canFinalizeAppointment
+                  ? null
+                  : () {
+                      showModalBottomSheet<void>(
+                        context: context,
+                        isScrollControlled: true,
+                        builder: (BuildContext context) {
+                          return ConfirmBookingModal();
+                        },
+                      );
+                    },
+            )
           ],
         ),
       ),
@@ -80,31 +84,26 @@ class _BookingPageState extends State<BookingPage> {
 }
 
 class _BookingMainContent extends StatelessWidget {
-  const _BookingMainContent({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     final servicesProvider = Provider.of<ServicesProvider>(context);
     List<Widget> times = [];
-    //Bloquear fechas no disponible para los estilistas.
-    //Horario de atencion de 10:00 am hasta las 8:pm
-    for (var i = 10; i < 20; i++) {
-      // eleccion de estar del boton de horario
+
+    // Horario de atención de 10:00 am hasta las 8:00pm (10:00 - 20:00)
+    for (var i = 10; i <= 20; i++) {
       int status = _BookingTime.normal;
       final stylist = servicesProvider.stylist;
       final current = DateTime(servicesProvider.year, servicesProvider.month,
           servicesProvider.day, i, 0, 0);
 
-      //Si la fecha selecionada es igual a la fecha
-      //actual en el loop se marca como seleccionada.
+      // Si la fecha seleccionada es igual a la fecha
+      // actual en el loop se marca como seleccionada.
       if (servicesProvider.currentDate.compareTo(current) == 0) {
         status = _BookingTime.selected;
       }
-      //la fecha minima debes ser actual
       if (servicesProvider.minDate.compareTo(current) > 0) {
         status = _BookingTime.blocked;
       }
-
       if (stylist != null) {
         stylist.lockedDates.forEach((lockedDate) {
           if (lockedDate.compareTo(current) == 0) {
@@ -115,49 +114,49 @@ class _BookingMainContent extends StatelessWidget {
 
       times.add(_BookingTime(
         status: status,
-        //time: "$hour:00 $am",
         time: formatHour(current),
         onTap: () => servicesProvider.hour = i,
+        key: null,
       ));
     }
 
-    return servicesProvider.isLoadingService
+    return servicesProvider.isLoadingService ||
+            servicesProvider.bookingService == null
         ? Column(
             children: [
               Calendar(),
-              //Error en uso de Expanded en ListView
-              Row(
-                children: [
-                  Expanded(
-                    child: CircularProgressIndicator(
-                        color: Utils
-                            .primaryColor // cambio de color del simbolo del carga
-                        ),
+              Expanded(
+                child: Center(
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      Utils.sencondaryColor,
+                    ),
                   ),
-                ],
+                ),
               ),
             ],
           )
         : ListView(
             children: [
-              const Calendar(),
-              const _Subtitle(subtitle: 'Stylists'),
-              const SizedBox(height: 5),
-              StylistsList(stylists: servicesProvider.bookingService!.stylists),
-              const SizedBox(height: 10),
-              const _Subtitle(subtitle: 'Available Time'),
-              const SizedBox(height: 10),
+              Calendar(),
+              SizedBox(height: 5.0),
+              _Subtitle(subtitle: 'Stylists'),
+              SizedBox(height: 10.0),
+              _StylistsList(
+                stylists: servicesProvider.bookingService!.stylists,
+              ),
+              SizedBox(height: 10.0),
+              _Subtitle(subtitle: 'Available Time'),
+              SizedBox(height: 10.0),
               Container(
-                height: (times.length / 3).ceil() * 50,
-                // da la dimension de las letras de los horarios
+                height: (times.length / 3).ceil() * 50.0,
                 child: GridView.count(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  crossAxisSpacing: 20,
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                  crossAxisSpacing: 10,
                   mainAxisSpacing: 10,
-                  childAspectRatio: 2.5,
+                  childAspectRatio: 2.9,
                   crossAxisCount: 3,
-                  physics: const NeverScrollableScrollPhysics(),
-                  // para no desplazar el scroll por mas que esten aparte
+                  physics: NeverScrollableScrollPhysics(),
                   children: times,
                 ),
               ),
@@ -167,12 +166,15 @@ class _BookingMainContent extends StatelessWidget {
 }
 
 class _BookingTime extends StatelessWidget {
-  const _BookingTime(
-      {Key? key, required this.time, required this.status, required this.onTap})
-      : super(key: key);
+  const _BookingTime({
+    Key? key,
+    required this.time,
+    this.status,
+    required this.onTap,
+  }) : super(key: key);
 
   final String time;
-  final int status;
+  final int? status;
   final Function() onTap;
 
   static final int normal = 1;
@@ -189,24 +191,25 @@ class _BookingTime extends StatelessWidget {
     } else if (status == blocked) {
       backgroundColor = Utils.grayColor;
     }
+
     return Material(
-      borderRadius: BorderRadius.all(Radius.circular(10)),
+      borderRadius: BorderRadius.all(Radius.circular(10.0)),
       child: InkWell(
         onTap: status == normal ? onTap : null,
-        borderRadius: BorderRadius.all(Radius.circular(10)),
+        borderRadius: BorderRadius.all(Radius.circular(10.0)),
         splashColor: Utils.sencondaryColor,
         child: Ink(
           padding: EdgeInsets.all(10),
           decoration: BoxDecoration(
             color: backgroundColor,
-            borderRadius: BorderRadius.all(Radius.circular(10)),
+            borderRadius: BorderRadius.all(Radius.circular(10.0)),
           ),
           child: Center(
             child: Text(
               time,
-              style: Theme.of(context).textTheme.headline6!.copyWith(
+              style: Theme.of(context).textTheme.headline6?.copyWith(
                     color: textColor,
-                    fontSize: 20,
+                    fontSize: 20.0,
                   ),
             ),
           ),
@@ -216,8 +219,8 @@ class _BookingTime extends StatelessWidget {
   }
 }
 
-class StylistsList extends StatelessWidget {
-  const StylistsList({
+class _StylistsList extends StatelessWidget {
+  const _StylistsList({
     Key? key,
     required this.stylists,
   }) : super(key: key);
@@ -226,10 +229,10 @@ class StylistsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // los estilistas
     final _servicesProvider = Provider.of<ServicesProvider>(context);
+
     return Container(
-      height: 200,
+      height: 200.0,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: stylists.length,
@@ -238,12 +241,10 @@ class StylistsList extends StatelessWidget {
           final isSelected = _servicesProvider.stylist != null &&
               _servicesProvider.stylist?.id == stylist.id;
 
-          //final isSelected = _servicesProvider.stylist?.id == stylist.id;
-
           if (index == 0) {
             return Row(
               children: [
-                SizedBox(width: 20.0),
+                SizedBox(width: 20),
                 StylistCard(
                   stylist: stylist,
                   isSelected: isSelected,
@@ -252,7 +253,6 @@ class StylistsList extends StatelessWidget {
               ],
             );
           }
-
           if (index == stylists.length - 1) {
             return Row(
               children: [
@@ -273,7 +273,7 @@ class StylistsList extends StatelessWidget {
           );
         },
         separatorBuilder: (_, int index) {
-          return SizedBox(width: 20);
+          return SizedBox(width: 20.0);
         },
       ),
     );
@@ -292,23 +292,23 @@ class _Subtitle extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24.0),
-      child: Text(subtitle,
-          style: Theme.of(context).textTheme.headline5?.copyWith(
-                fontWeight: FontWeight.w300,
-              )),
+      child: Text(
+        subtitle,
+        style: Theme.of(context).textTheme.headline5?.copyWith(
+              fontWeight: FontWeight.w300,
+            ),
+      ),
     );
   }
 }
 
-//Modelo temporal
-
 class StylistCard extends StatelessWidget {
-  const StylistCard(
-      {Key? key,
-      required this.stylist,
-      required this.isSelected,
-      required this.onTap})
-      : super(key: key);
+  const StylistCard({
+    Key? key,
+    required this.stylist,
+    required this.isSelected,
+    required this.onTap,
+  }) : super(key: key);
 
   final Stylist stylist;
   final bool isSelected;
@@ -317,62 +317,54 @@ class StylistCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      //seleccion de estilistas
       child: InkWell(
-        borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+        borderRadius: BorderRadius.all(Radius.circular(10.0)),
         onTap: isSelected ? null : onTap,
         child: Ink(
-          padding: const EdgeInsets.all(10.0),
-          //Dimension de el listado de stulistas
+          padding: EdgeInsets.all(15.0),
           decoration: BoxDecoration(
-            borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+            borderRadius: BorderRadius.all(Radius.circular(15.0)),
             color: Colors.white,
             border: Border.all(
-              color: isSelected ? Utils.grayColor : Utils.primaryColor!,
+              color: isSelected ? Utils.primaryColor! : Utils.grayColor,
               width: 2.0,
             ),
           ),
-
           child: Column(
             children: [
               Container(
-                //Fichas con fotos de los stilistas
                 clipBehavior: Clip.hardEdge,
-                decoration: const BoxDecoration(shape: BoxShape.circle),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                ),
                 child: FadeInImage(
-                  placeholder: const AssetImage('assets/stylist.jpg'),
-                  // foto que sale unos segunos para cargar!!
+                  placeholder: AssetImage('assets/haircut.jpg'),
                   image: NetworkImage(stylist.photo),
                   fit: BoxFit.cover,
                   width: 100,
-                  height: 100,
+                  height: 80,
                 ),
               ),
-              const SizedBox(
-                height: 10,
-              ),
+              SizedBox(height: 10.0),
               Text(
                 stylist.name,
                 style: Theme.of(context).textTheme.headline5,
               ),
-              const SizedBox(
-                height: 10,
-              ),
+              SizedBox(height: 10.0),
               Row(
                 children: [
                   Text(
                     "${stylist.score}",
-                    style: Theme.of(context)
-                        .textTheme
-                        .headline6
-                        ?.copyWith(color: Utils.primaryColor),
+                    style: Theme.of(context).textTheme.headline6?.copyWith(
+                          color: Utils.primaryColor,
+                        ),
                   ),
                   Icon(
                     Icons.star,
                     color: Utils.primaryColor,
                   ),
                 ],
-              )
+              ),
             ],
           ),
         ),

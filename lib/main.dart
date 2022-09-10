@@ -44,8 +44,8 @@ class MyApp extends StatelessWidget {
               ),
         ),
         routes: {
-          HomePage.route: (_) => const HomePage(),
-          BookingPage.route: (_) => const BookingPage(),
+          HomePage.route: (_) =>  HomePage(),
+          BookingPage.route: (_) => BookingPage(),
           FinishPage.route: (_) => FinishPage(),
         },
       ),
