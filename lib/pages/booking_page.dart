@@ -1,17 +1,15 @@
+import 'package:agenda_booking/models/service.dart';
+import 'package:agenda_booking/models/stylist.dart';
+import 'package:agenda_booking/pages/confirm_booking_modal.dart';
 import 'package:agenda_booking/providers/services_provider.dart';
 import 'package:agenda_booking/utils/utils.dart';
+import 'package:agenda_booking/widgets/booking_action_button.dart';
+import 'package:agenda_booking/widgets/calendar.dart';
 import 'package:flutter/material.dart';
-import 'package:agenda_booking/models/service.dart';
 import 'package:provider/provider.dart';
-import '../models/stylist.dart';
-import '../widgets/booking_action_button.dart';
-import '../widgets/calendar.dart';
-import 'confirm_booking_modal.dart';
 
 class BookingPage extends StatefulWidget {
-  static const String route = '/booking';
-
-  const BookingPage({super.key});
+  static final String route = '/booking';
 
   @override
   _BookingPageState createState() => _BookingPageState();
@@ -22,10 +20,10 @@ class _BookingPageState extends State<BookingPage> {
   void initState() {
     super.initState();
 
-    () async {
+        () async {
       await Future.delayed(Duration.zero);
 
-      final service = ModalRoute.of(context)?.settings.arguments as Service;
+      final service = ModalRoute.of(context)!.settings.arguments as Service;
       final servicesProvider = Provider.of<ServicesProvider>(
         context,
         listen: false,
@@ -38,24 +36,24 @@ class _BookingPageState extends State<BookingPage> {
 
   @override
   Widget build(BuildContext context) {
-    final service = ModalRoute.of(context)?.settings.arguments as Service;
+    final service = ModalRoute.of(context)!.settings.arguments as Service;
     final servicesProvider = Provider.of<ServicesProvider>(context);
 
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         elevation: 0.0,
-        title: const Text('Set Appointment'),
+        title: Text('Set Appointment'),
         backgroundColor: Utils.primaryColor,
         centerTitle: true,
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
-          icon: const Icon(Icons.arrow_back_ios),
+          icon: Icon(Icons.arrow_back_ios),
         ),
       ),
       body: RefreshIndicator(
         onRefresh: () => servicesProvider.loadServiceForBooking(service),
-         color: Utils.secondaryColor,
+        color: Utils.secondaryColor,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -67,14 +65,14 @@ class _BookingPageState extends State<BookingPage> {
               onPressed: !servicesProvider.canFinalizeAppointment
                   ? null
                   : () {
-                      showModalBottomSheet<void>(
-                        context: context,
-                        isScrollControlled: true,
-                        builder: (BuildContext context) {
-                          return const ConfirmBookingModal();
-                        },
-                      );
-                    },
+                showModalBottomSheet<void>(
+                  context: context,
+                  isScrollControlled: true,
+                  builder: (BuildContext context) {
+                    return ConfirmBookingModal();
+                  },
+                );
+              },
             )
           ],
         ),
@@ -116,52 +114,51 @@ class _BookingMainContent extends StatelessWidget {
         status: status,
         time: formatHour(current),
         onTap: () => servicesProvider.hour = i,
-        key: null,
       ));
     }
 
     return servicesProvider.isLoadingService ||
-            servicesProvider.bookingService == null
+        servicesProvider.bookingService == null
         ? Column(
-            children: [
-              const Calendar(),
-              Expanded(
-                child: Center(
-                  child: CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      Utils.secondaryColor,
-                    ),
-                  ),
-                ),
+      children: [
+        Calendar(),
+        Expanded(
+          child: Center(
+            child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(
+                Utils.secondaryColor,
               ),
-            ],
-          )
+            ),
+          ),
+        ),
+      ],
+    )
         : ListView(
-            children: [
-              Calendar(),
-              SizedBox(height: 5.0),
-              _Subtitle(subtitle: 'Stylists'),
-              SizedBox(height: 10.0),
-              _StylistsList(
-                stylists: servicesProvider.bookingService!.stylists,
-              ),
-              SizedBox(height: 10.0),
-              _Subtitle(subtitle: 'Available Time'),
-              SizedBox(height: 10.0),
-              Container(
-                height: (times.length / 3).ceil() * 50.0,
-                child: GridView.count(
-                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                  childAspectRatio: 2.9,
-                  crossAxisCount: 3,
-                  physics: NeverScrollableScrollPhysics(),
-                  children: times,
-                ),
-              ),
-            ],
-          );
+      children: [
+        Calendar(),
+        SizedBox(height: 20.0),
+        _Subtitle(subtitle: 'Stylists'),
+        SizedBox(height: 15.0),
+        _StylistsList(
+          stylists: servicesProvider.bookingService!.stylists,
+        ),
+        SizedBox(height: 30.0),
+        _Subtitle(subtitle: 'Available Time'),
+        SizedBox(height: 15.0),
+        Container(
+          height: (times.length / 3).ceil() * 55.0,
+          child: GridView.count(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            crossAxisSpacing: 20,
+            mainAxisSpacing: 10,
+            childAspectRatio: 2.9,
+            crossAxisCount: 3,
+            physics: NeverScrollableScrollPhysics(),
+            children: times,
+          ),
+        ),
+      ],
+    );
   }
 }
 
@@ -169,21 +166,21 @@ class _BookingTime extends StatelessWidget {
   const _BookingTime({
     Key? key,
     required this.time,
-    this.status,
+    required this.status,
     required this.onTap,
   }) : super(key: key);
 
   final String time;
-  final int? status;
+  final int status;
   final Function() onTap;
 
-  static final int normal = 1;
-  static final int selected = 2;
-  static final int blocked = 3;
+  static const int normal = 1;
+  static const int selected = 2;
+  static const int blocked = 3;
 
   @override
   Widget build(BuildContext context) {
-    Color backgroundColor = Utils.primaryColor!;
+    Color backgroundColor = Utils.primaryColor;
     Color textColor = Colors.white;
 
     if (status == selected) {
@@ -193,24 +190,24 @@ class _BookingTime extends StatelessWidget {
     }
 
     return Material(
-      borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+      borderRadius: BorderRadius.all(Radius.circular(10.0)),
       child: InkWell(
         onTap: status == normal ? onTap : null,
-        borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+        borderRadius: BorderRadius.all(Radius.circular(10.0)),
         splashColor: Utils.secondaryColor,
         child: Ink(
-          padding: const EdgeInsets.all(10),
+          padding: EdgeInsets.all(5.0),
           decoration: BoxDecoration(
             color: backgroundColor,
-            borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+            borderRadius: BorderRadius.all(Radius.circular(10.0)),
           ),
           child: Center(
             child: Text(
               time,
               style: Theme.of(context).textTheme.headline6?.copyWith(
-                    color: textColor,
-                    fontSize: 20.0,
-                  ),
+                color: textColor,
+                fontSize: 18.0,
+              ),
             ),
           ),
         ),
@@ -231,8 +228,8 @@ class _StylistsList extends StatelessWidget {
   Widget build(BuildContext context) {
     final _servicesProvider = Provider.of<ServicesProvider>(context);
 
-    return SizedBox(
-      height: 200.0,
+    return Container(
+      height: 210.0,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: stylists.length,
@@ -244,7 +241,7 @@ class _StylistsList extends StatelessWidget {
           if (index == 0) {
             return Row(
               children: [
-                SizedBox(width: 20),
+                SizedBox(width: 20.0),
                 StylistCard(
                   stylist: stylist,
                   isSelected: isSelected,
@@ -291,12 +288,12 @@ class _Subtitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+      padding: const EdgeInsets.symmetric(horizontal: 20.0),
       child: Text(
         subtitle,
         style: Theme.of(context).textTheme.headline5?.copyWith(
-              fontWeight: FontWeight.w300,
-            ),
+          fontWeight: FontWeight.w300,
+        ),
       ),
     );
   }
@@ -323,10 +320,10 @@ class StylistCard extends StatelessWidget {
         child: Ink(
           padding: EdgeInsets.all(15.0),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(15.0)),
+            borderRadius: BorderRadius.all(Radius.circular(10.0)),
             color: Colors.white,
             border: Border.all(
-              color: isSelected ? Utils.primaryColor! : Utils.grayColor,
+              color: isSelected ? Utils.primaryColor : Utils.grayColor,
               width: 2.0,
             ),
           ),
@@ -341,7 +338,7 @@ class StylistCard extends StatelessWidget {
                   placeholder: AssetImage('assets/haircut.jpg'),
                   image: NetworkImage(stylist.photo),
                   fit: BoxFit.cover,
-                  width: 100,
+                  width: 100.0,
                   height: 80,
                 ),
               ),
@@ -356,8 +353,8 @@ class StylistCard extends StatelessWidget {
                   Text(
                     "${stylist.score}",
                     style: Theme.of(context).textTheme.headline6?.copyWith(
-                          color: Utils.primaryColor,
-                        ),
+                      color: Utils.primaryColor,
+                    ),
                   ),
                   Icon(
                     Icons.star,
@@ -372,3 +369,4 @@ class StylistCard extends StatelessWidget {
     );
   }
 }
+

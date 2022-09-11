@@ -1,15 +1,12 @@
+import 'package:agenda_booking/pages/finish_page.dart';
 import 'package:agenda_booking/providers/booking_provider.dart';
 import 'package:agenda_booking/providers/services_provider.dart';
+import 'package:agenda_booking/utils/utils.dart';
+import 'package:agenda_booking/widgets/booking_action_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../utils/utils.dart';
-import '../widgets/booking_action_button.dart';
-import 'booking_page.dart';
-import 'finish_page.dart';
 
 class ConfirmBookingModal extends StatelessWidget {
-  const ConfirmBookingModal({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     final servicesProvider = Provider.of<ServicesProvider>(context);
@@ -18,18 +15,20 @@ class ConfirmBookingModal extends StatelessWidget {
     final stylist = servicesProvider.stylist?.name;
     final price = servicesProvider.bookingService?.price;
 
-    bookingProvider.initData(servicesProvider.stylist!.id,
-        servicesProvider.bookingService!.id, servicesProvider.currentDate);
+    bookingProvider.initData(
+      servicesProvider.stylist!.id,
+      servicesProvider.bookingService!.id,
+      servicesProvider.currentDate,
+    );
 
     return Container(
-      height: MediaQuery.of(context).size.height *
-          0.7, //el tamaño de la ventana que se abre
-      //pantalla que sale al oprimir Book Now
+      height: MediaQuery.of(context).size.height * 0.6,
       color: Colors.white,
       child: ListView(
-        padding: const EdgeInsets.all(20),
+        padding: EdgeInsets.all(20.0),
         children: [
-          const _BookingTitle(value: 'Confirm'),
+          _BookingTitle(value: 'Confirm'),
+          SizedBox(height: 10.0),
           TextField(
             onChanged: (String value) {
               bookingProvider.name = value;
@@ -39,6 +38,7 @@ class ConfirmBookingModal extends StatelessWidget {
               errorText: bookingProvider.nameError,
             ),
           ),
+          SizedBox(height: 10.0),
           TextField(
             onChanged: (String value) {
               bookingProvider.phone = value;
@@ -48,28 +48,33 @@ class ConfirmBookingModal extends StatelessWidget {
               errorText: bookingProvider.phoneError,
             ),
           ),
-          const SizedBox(height: 50),
-          _BookingInfo(value: date),
-          const SizedBox(height: 5),
-          _BookingInfo(value: "With: $stylist"),
-          const SizedBox(height: 10),
-          _BookingInfo(value: "Price:\$$price"),
-          const SizedBox(height: 50),
+          SizedBox(height: 30.0),
+          _BookingInfo(value: "$date"),
+          SizedBox(height: 10.0),
+          _BookingInfo(value: "With $stylist"),
+          SizedBox(height: 10.0),
+          _BookingInfo(value: "Price: \$$price"),
+          SizedBox(height: 30.0),
           bookingProvider.isLoading
-              ? const Center(
-                  child: CircularProgressIndicator(),
-                )
+              ? Center(
+            child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(
+                Utils.secondaryColor,
+              ),
+            ),
+          )
               : BookingActionButton(
-                  label: 'Book Now',
-                  onPressed: bookingProvider.canSend
-                      ? () => sendResquest(context, bookingProvider)
-                      : null)
+            label: 'Book Now',
+            onPressed: bookingProvider.canSend
+                ? () => sendRequest(context, bookingProvider)
+                : null,
+          )
         ],
       ),
     );
   }
 
-  void sendResquest(
+  void sendRequest(
       BuildContext context, BookingProvider bookingProvider) async {
     bookingProvider.isLoading = true;
     final success = await bookingProvider.save();
@@ -88,16 +93,16 @@ class _BookingTitle extends StatelessWidget {
     Key? key,
     required this.value,
   }) : super(key: key);
+
   final String value;
 
   @override
   Widget build(BuildContext context) {
     return Text(
       value,
-      style: Theme.of(context)
-          .textTheme
-          .headline5!
-          .copyWith(fontWeight: FontWeight.w300),
+      style: Theme.of(context).textTheme.headline5?.copyWith(
+        fontWeight: FontWeight.w300,
+      ),
       textAlign: TextAlign.center,
     );
   }
@@ -108,17 +113,18 @@ class _BookingInfo extends StatelessWidget {
     Key? key,
     required this.value,
   }) : super(key: key);
+
   final String value;
 
   @override
   Widget build(BuildContext context) {
     return Text(
       value,
-      style: Theme.of(context)
-          .textTheme
-          .headline6!
-          .copyWith(fontWeight: FontWeight.w400),
+      style: Theme.of(context).textTheme.headline6?.copyWith(
+        fontWeight: FontWeight.w700,
+      ),
       textAlign: TextAlign.center,
     );
   }
 }
+

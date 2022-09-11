@@ -1,14 +1,13 @@
-import 'package:agenda_booking/models/service.dart';
 import 'package:agenda_booking/models/category.dart';
+import 'package:agenda_booking/models/service.dart';
+import 'package:agenda_booking/pages/booking_page.dart';
 import 'package:agenda_booking/providers/services_provider.dart';
 import 'package:agenda_booking/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../widgets/search_box.dart';
-import 'booking_page.dart';
 
 class HomePage extends StatefulWidget {
-  static const String route = '/';
+  static final String route = '/';
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -34,7 +33,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    ServicesProvider servicesProvider = Provider.of<ServicesProvider>(context);
+    final servicesProvider = Provider.of<ServicesProvider>(context);
+
     return Scaffold(
       body: servicesProvider.isLoading
           ? Center(
@@ -68,18 +68,17 @@ class __PageViewCategoriesState extends State<_PageViewCategories> {
       context,
       listen: false,
     );
-    servicesProvider.pageController?.dispose();
+    servicesProvider.pageController!.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    // modificacion
     final servicesProvider = Provider.of<ServicesProvider>(context);
     servicesProvider.pageController = PageController(initialPage: 0);
 
     return PageView.builder(
-      physics: const NeverScrollableScrollPhysics(),
+      physics: NeverScrollableScrollPhysics(),
       controller: servicesProvider.pageController,
       itemCount: servicesProvider.categories.length,
       itemBuilder: (_, int index) {
@@ -102,12 +101,12 @@ class _WhiteBox extends StatelessWidget {
     return Align(
       alignment: Alignment.bottomCenter,
       child: Container(
-        height: size.height * 0.72,
+        height: size.height * 0.74,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Container(
-              height: 70.0,
+              height: 50.0,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
@@ -185,10 +184,10 @@ class _ServicesList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return Container(
       height: 500.0,
       child: ListView.separated(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+        padding: EdgeInsets.symmetric(horizontal: 20.0),
         itemBuilder: (_, int index) {
           Service service = services[index];
           return ListTile(
@@ -207,7 +206,7 @@ class _ServicesList extends StatelessWidget {
         },
         separatorBuilder: (_, int index) {
           return Divider(
-            color: Utils.secondaryColor,
+            color: Utils.grayColor,
           );
         },
         itemCount: services.length,
@@ -246,7 +245,7 @@ class _CategoriesCarousel extends StatelessWidget {
           if (index == 0) {
             return Row(
               children: [
-                SizedBox(width: 15.0),
+                SizedBox(width: 20.0),
                 categoryItem,
               ],
             );
@@ -262,7 +261,7 @@ class _CategoriesCarousel extends StatelessWidget {
           return categoryItem;
         },
         separatorBuilder: (_, int index) {
-          return SizedBox(width: 15);
+          return SizedBox(width: 15.0);
         },
       ),
     );
@@ -292,8 +291,8 @@ class _CategoryItem extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             Container(
-              width: 70.0,
-              height: 70.0,
+              width: 80.0,
+              height: 80.0,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: isSelected ? Utils.secondaryColor : Utils.primaryColor,
@@ -316,7 +315,10 @@ class _CategoryItem extends StatelessWidget {
 }
 
 class _CategoryPageView extends StatelessWidget {
-  const _CategoryPageView({Key? key, required this.path}) : super(key: key);
+  const _CategoryPageView({
+    Key? key,
+    required this.path,
+  }) : super(key: key);
 
   final String path;
 
@@ -325,7 +327,7 @@ class _CategoryPageView extends StatelessWidget {
     return Container(
       alignment: Alignment.topCenter,
       child: FadeInImage(
-        placeholder: const AssetImage('assets/haircut.jpg'),
+        placeholder: AssetImage('assets/haircut.jpg'),
         image: NetworkImage(path),
         fit: BoxFit.contain,
         width: double.infinity,
@@ -333,3 +335,4 @@ class _CategoryPageView extends StatelessWidget {
     );
   }
 }
+

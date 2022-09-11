@@ -5,7 +5,6 @@ import 'package:http/http.dart' as http;
 
 class BookingProvider with ChangeNotifier {
   bool _isLoading = false;
-
   bool get isLoading => _isLoading;
 
   set isLoading(bool value) {
@@ -24,13 +23,10 @@ class BookingProvider with ChangeNotifier {
   }
 
   Validation _name = Validation();
-
   String get name => _name.value!;
-
   String? get nameError => _name.error;
 
   set name(String value) {
-    // correccion del nombre
     String? errorLength = Validation.hasValidLength(value, min: 5, max: 30);
 
     if (errorLength != null) {
@@ -43,14 +39,11 @@ class BookingProvider with ChangeNotifier {
   }
 
   Validation _phone = Validation();
-
   String? get phone => _phone.value;
-
   String? get phoneError => _phone.error;
 
   set phone(String? value) {
     String? errorLength = Validation.hasValidLength(value!, min: 7, max: 20);
-
     if (errorLength != null) {
       _phone = Validation(error: errorLength);
     } else {
@@ -111,17 +104,16 @@ class Validation {
 
   Validation({this.value, this.error});
 
-  bool get isEmpty {
+  bool? get isEmpty {
     if (value == null) return true;
-    return value!.isEmpty;
+    return value?.isEmpty;
   }
 
   bool get hasError => error != null;
 
-  bool get isEmptyOrHasError => isEmpty || hasError;
+  bool get isEmptyOrHasError => isEmpty! || hasError;
 
-  static String? hasValidLength(String value,
-      {required int min, required int max}) {
+  static String? hasValidLength(String value, {required int min, required int max}) {
     if (min != null && value != null && value.length < min) {
       return "La longitud de texto minima es $min";
     }
@@ -131,3 +123,4 @@ class Validation {
     return null;
   }
 }
+

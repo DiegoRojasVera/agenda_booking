@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
                 bodyText2: ThemeData.light().textTheme.bodyText1?.copyWith(
                       color: Utils.secondaryColor,
                     ),
-                subtitle1: ThemeData.light().textTheme.subtitle1?.copyWith(
+                subtitle1: ThemeData.light().textTheme.subtitle1!.copyWith(
                       color: Utils.secondaryColor,
                     ),
                 headline6: ThemeData.light().textTheme.headline6!.copyWith(

@@ -1,11 +1,13 @@
+import 'package:agenda_booking/models/category.dart';
+import 'package:agenda_booking/models/service.dart';
+import 'package:agenda_booking/models/stylist.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttericon/font_awesome5_icons.dart';
-import 'package:fluttericon/font_awesome_icons.dart';
 import 'package:fluttericon/rpg_awesome_icons.dart';
 import 'package:http/http.dart' as http;
+import 'package:fluttericon/font_awesome5_icons.dart';
+import 'package:fluttericon/font_awesome_icons.dart';
+
 import '../models/category.dart';
-import '../models/service.dart';
-import '../models/stylist.dart';
 
 class ServicesProvider with ChangeNotifier {
   final Map<String, IconData> icons = {
@@ -31,7 +33,7 @@ class ServicesProvider with ChangeNotifier {
     'Sep',
     'Oct',
     'Nov',
-    'Dic',
+    'Dec',
   ];
   final List<String> weekdays = [
     'Lu',
@@ -43,12 +45,8 @@ class ServicesProvider with ChangeNotifier {
     'Dom'
   ];
 
-  get isSearchVisible => null;
-
-  set search(String search) {}
-
   void clean() {
-    _stylist = null;
+  //  _stylist = null;
     _date = new DateTime(DateTime.now().year, DateTime.now().month,
         DateTime.now().day, DateTime.now().hour + 2, 0, 0);
 
@@ -93,7 +91,7 @@ class ServicesProvider with ChangeNotifier {
     0,
     0,
   );
-  DateTime _date =  DateTime(
+  DateTime _date = new DateTime(
     DateTime.now().year,
     DateTime.now().month,
     DateTime.now().day,
@@ -158,7 +156,7 @@ class ServicesProvider with ChangeNotifier {
   }
 
   set day(int value) {
-    DateTime newDate =  DateTime(
+    DateTime newDate = new DateTime(
       _date.year,
       _date.month,
       value,
@@ -204,7 +202,7 @@ class ServicesProvider with ChangeNotifier {
       attempts++;
 
       if (isSelectedDateInvalid) {
-        hour = _date.hour < 20 ? startHour++ : 10;
+        this.hour = _date.hour < 20 ? startHour++ : 10;
       }
     } while (isSelectedDateInvalid && attempts < 30);
 
@@ -246,8 +244,11 @@ class ServicesProvider with ChangeNotifier {
   void selectCategory(Category category) {
     int index = _categories.indexOf(category);
     _category = category;
-    pageController?.animateToPage(index,
-        duration: Duration(milliseconds: 5), curve: Curves.easeIn);
+    pageController?.animateToPage(
+      index,
+      duration: Duration(milliseconds: 300),
+      curve: Curves.easeIn,
+    );
     notifyListeners();
   }
 
@@ -271,7 +272,7 @@ class ServicesProvider with ChangeNotifier {
     notifyListeners();
 
     _categories = await getCategoriesWithServices();
-    _category = (_categories.length > 0 ? _categories[0] : null)!;
+    _category = _categories.length > 0 ? _categories[0] : null;
 
     _isLoading = false;
     notifyListeners();
@@ -303,3 +304,4 @@ class ServicesProvider with ChangeNotifier {
     return null;
   }
 }
+
